@@ -2,25 +2,30 @@ parser grammar MovaParser;
 
 options { tokenVocab = MovaLexer; }
 
-value : IDENTIFIER | INTEGER | DECIMAL | STRING ;
-action: PLUS | MINUS | MULTIPLY | DIVIDE | PREFIX | SUFFIX | WITH ;
-something: value | expression;
-expression : (LPAREN value action something RPAREN) | (value action something);
+value : IDENTIFIER | INTEGER | DECIMAL | STRING;
+action: PLUS | MINUS | MULTIPLY | DIVIDE | PREFIX | SUFFIX | WITH;
 
-assignment: IDENTIFIER EQUALS something ;
+expression : expression action expression
+           | LPAREN expression RPAREN
+           | value;
 
-output: SHOW something ;
+assignment: IDENTIFIER EQUALS expression DOT;
+
+output: SHOW expression;
 decrement: DECREMENT IDENTIFIER;
 increment: INCREMENT IDENTIFIER;
 
-command: (assignment | decrement | increment | output) ;
+command: (assignment | decrement | increment | output);
 
-condition: something (NOT)* ((EQUALS | MORETHAN | LESSTHAN | MOREOREQUAL | LESSOREQUAL | NOTEQUAL) something)* ;
+condition: expression (NOT)* ((EQUALS | MORETHAN | LESSTHAN | MOREOREQUAL | LESSOREQUAL | NOTEQUAL) expression)*;
 conditional: (IF condition ((AND | OR) condition)* (THEN | COLON) command (ALSO command)*)+
 (OTHERWISE command (ALSO command)*)*;
 
-loop: (((DO | REPEAT) ((something TIMES) | (UNTIL condition)) COLON command (ALSO command)*) | (command something TIMES));
+loop: (((DO | REPEAT) ((expression TIMES) | (UNTIL condition)) COLON command (ALSO command)*) |
+(command expression TIMES));
 
-validStructure: (command | conditional | loop) DOT ;
+validStructure: (command | conditional | loop) (ALSO validStructure)* DOT;
 
-validProgram: validStructure+ ;
+validProgram: validStructure* EOF;
+
+//todo: negative values, comments
