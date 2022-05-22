@@ -46,8 +46,8 @@ fragment SYMBOL    : [A-Za-z0-9_] ;
 
 IDENTIFIER         : SYMBOL+ ;
 
-INTEGER            : DIGIT+ ;
-DECIMAL            : DIGIT+ COMA DIGIT+ ;
+INTEGER            : '-'? DIGIT+ ;
+DECIMAL            : '-'? DIGIT+ COMA DIGIT+ ;
 STRING             : '"'SYMBOL*'"' ;
 
 COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip;

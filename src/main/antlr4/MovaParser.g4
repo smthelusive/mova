@@ -28,4 +28,4 @@ validStructure: (command | conditional | loop) (ALSO validStructure)* DOT;
 
 validProgram: validStructure* EOF;
 
-//todo: negative values
+// todo: escape symbol
