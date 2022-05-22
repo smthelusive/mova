@@ -49,3 +49,5 @@ IDENTIFIER         : SYMBOL+ ;
 INTEGER            : DIGIT+ ;
 DECIMAL            : DIGIT+ COMA DIGIT+ ;
 STRING             : '"'SYMBOL*'"' ;
+
+COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip;

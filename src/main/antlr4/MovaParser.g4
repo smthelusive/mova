@@ -9,7 +9,7 @@ expression : expression action expression
            | LPAREN expression RPAREN
            | value;
 
-assignment: IDENTIFIER EQUALS expression DOT;
+assignment: IDENTIFIER EQUALS expression;
 
 output: SHOW expression;
 decrement: DECREMENT IDENTIFIER;
@@ -28,4 +28,4 @@ validStructure: (command | conditional | loop) (ALSO validStructure)* DOT;
 
 validProgram: validStructure* EOF;
 
-//todo: negative values, comments
+//todo: negative values
