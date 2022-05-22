@@ -51,3 +51,6 @@ DECIMAL            : '-'? DIGIT+ COMA DIGIT+ ;
 STRING             : '"'SYMBOL*'"' ;
 
 COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip;
+
+// easter egg, this command should reply in terminal "Heroyam Slava!" ("Героям Слава!")
+SLAVAUKRAINI       : ((('s' | 'S')'lava ' ('u' | 'U') 'kraini') | (('с' | 'С')'лава ' ('у' | 'У') 'країні')) '!'? ;

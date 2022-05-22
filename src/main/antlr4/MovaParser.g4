@@ -14,6 +14,7 @@ assignment: IDENTIFIER EQUALS expression;
 output: SHOW expression;
 decrement: DECREMENT IDENTIFIER;
 increment: INCREMENT IDENTIFIER;
+slavaUkraini: SLAVAUKRAINI;
 
 command: (assignment | decrement | increment | output);
 
@@ -24,7 +25,8 @@ conditional: (IF condition ((AND | OR) condition)* (THEN | COLON) command (ALSO 
 loop: (((DO | REPEAT) ((expression TIMES) | (UNTIL condition)) COLON command (ALSO command)*) |
 (command expression TIMES));
 
-validStructure: (command | conditional | loop) (ALSO validStructure)* DOT;
+validStructure: ((command | conditional | loop) (ALSO validStructure)* DOT)
+                | slavaUkraini;
 
 validProgram: validStructure* EOF;
 
