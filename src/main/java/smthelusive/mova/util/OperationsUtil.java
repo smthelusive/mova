@@ -22,6 +22,10 @@ public class OperationsUtil {
         return movaValue;
     }
 
+    private static String clean(String quotedString) {
+        return quotedString.replaceAll("\"", "");
+    }
+
     public static boolean isStringContext(MovaValue left, MovaValue right, MovaAction action) {
         return (action.equals(MovaAction.PREFIX) || action.equals(MovaAction.SUFFIX) || action.equals(MovaAction.WITH) ||
                 Optional.ofNullable(left.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.STRING)) ||
@@ -34,10 +38,12 @@ public class OperationsUtil {
     }
 
     public static String performStringAction(MovaValue left, MovaValue right, MovaAction action) {
+        String leftString = clean(left.getStringValue());
+        String rightString = clean(right.getStringValue());
         switch (action) {
-            case PREFIX:
-            case WITH: return left.getStringValue() + right.getStringValue();
-            case SUFFIX: return right.getStringValue() + left.getStringValue();
+            case SUFFIX:
+            case WITH: return leftString + rightString;
+            case PREFIX: return rightString + leftString;
         }
         // todo log warning
         return "";

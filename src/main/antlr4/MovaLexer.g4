@@ -43,14 +43,15 @@ NOTEQUAL           : '!=' | 'not equal to' | 'not equal' ;
 
 fragment DIGIT     : [0-9] ;
 fragment SYMBOL    : [A-Za-z0-9_] ;
+fragment ESCAPE_CHAR : '\\' [0btnfr"'\\] ;
 
 IDENTIFIER         : SYMBOL+ ;
 
 INTEGER            : '-'? DIGIT+ ;
 DECIMAL            : '-'? DIGIT+ COMA DIGIT+ ;
-STRING             : '"'SYMBOL*'"' ;
+STRING             : '"' ( ~[\\"\r\n] | ESCAPE_CHAR )* '"' ;
 
-COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip;
+COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip ;
 
 // easter egg, this command should reply in terminal "Heroyam Slava!" ("Героям Слава!")
 SLAVAUKRAINI       : ((('s' | 'S')'lava ' ('u' | 'U') 'kraini') | (('с' | 'С')'лава ' ('у' | 'У') 'країні')) '!'? ;

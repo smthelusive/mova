@@ -3,7 +3,6 @@ parser grammar MovaParser;
 options { tokenVocab = MovaLexer; }
 
 value : IDENTIFIER | INTEGER | DECIMAL | STRING;
-action: PLUS | MINUS | MULTIPLY | DIVIDE | PREFIX | SUFFIX | WITH;
 
 expression : expression (MULTIPLY | DIVIDE) expression
             | expression (PLUS | MINUS) expression
@@ -31,5 +30,3 @@ validStructure: ((command | conditional | loop) (ALSO validStructure)* DOT)
                 | slavaUkraini;
 
 validProgram: validStructure* EOF;
-
-// todo: escape symbol
