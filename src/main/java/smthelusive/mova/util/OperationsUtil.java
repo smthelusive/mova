@@ -1,8 +1,13 @@
 package smthelusive.mova.util;
 
+import gen.MovaParser;
+import org.antlr.v4.runtime.tree.ParseTree;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
 
 public class OperationsUtil {
 
@@ -23,11 +28,13 @@ public class OperationsUtil {
 
     public static boolean isStringContext(MovaValue left, MovaValue right, MovaAction action) {
         return (action.equals(MovaAction.PREFIX) || action.equals(MovaAction.SUFFIX) || action.equals(MovaAction.WITH) ||
-                left.getMovaType().equals(MovaType.STRING) || right.getMovaType().equals(MovaType.STRING));
+                Optional.ofNullable(left.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.STRING)) ||
+                        Optional.ofNullable(right.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.STRING)));
     }
 
     public static boolean isDoubleContext(MovaValue left, MovaValue right) {
-        return left.getMovaType().equals(MovaType.DECIMAL) || right.getMovaType().equals(MovaType.DECIMAL);
+        return Optional.ofNullable(left.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.DECIMAL)) ||
+                Optional.ofNullable(right.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.DECIMAL));
     }
 
     public static String performStringAction(MovaValue left, MovaValue right, MovaAction action) {

@@ -1,5 +1,6 @@
 package smthelusive.mova.visitor;
 
+import gen.MovaLexer;
 import gen.MovaParser;
 import gen.MovaParserBaseVisitor;
 import smthelusive.mova.domain.MovaAction;
@@ -24,7 +25,8 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
             // normal expression 0 = value, 1 = action, 2 = value:
             else {
                 MovaValue left = visit(ctx.getChild(0));
-                MovaAction action = OperationsUtil.convertedAction(ctx.getChild(1).getText());
+                MovaAction action = OperationsUtil.convertedAction(
+                        MovaParser.VOCABULARY.getSymbolicName(((MovaParser.ActionContext)ctx.getChild(1)).start.getType()));
                 MovaValue right = visit(ctx.getChild(2));
                 return OperationsUtil.calculate(left, right, action);
             }
