@@ -14,7 +14,7 @@ PLUS               : '+' | 'plus' | 'add' ;
 MINUS              : '-' | 'minus' | 'subtract' ;
 MULTIPLY           : '*' | 'multiply' | 'multiply by' ;
 DIVIDE             : '/' | 'divide' | 'divide by' | 'div' ;
-PREFIX             : 'prefixed' | 'prefixed with' ;
+PREFIX             : 'prefix' | 'prefixed' | 'prefixed with' ;
 SUFFIX             : 'suffix' | 'with suffix' ;
 WITH               : 'with' ;
 

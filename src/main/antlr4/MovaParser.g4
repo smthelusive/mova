@@ -5,9 +5,11 @@ options { tokenVocab = MovaLexer; }
 value : IDENTIFIER | INTEGER | DECIMAL | STRING;
 action: PLUS | MINUS | MULTIPLY | DIVIDE | PREFIX | SUFFIX | WITH;
 
-expression : expression action expression
-           | LPAREN expression RPAREN
-           | value;
+expression : expression (MULTIPLY | DIVIDE) expression
+            | expression (PLUS | MINUS) expression
+            | expression (PREFIX | SUFFIX | WITH) expression
+            | LPAREN expression RPAREN
+            | value;
 
 assignment: IDENTIFIER EQUALS expression;
 

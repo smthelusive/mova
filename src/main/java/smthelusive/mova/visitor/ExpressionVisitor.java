@@ -1,8 +1,8 @@
 package smthelusive.mova.visitor;
 
-import gen.MovaLexer;
-import gen.MovaParser;
-import gen.MovaParserBaseVisitor;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import smthelusive.mova.gen.MovaParser;
+import smthelusive.mova.gen.MovaParserBaseVisitor;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
@@ -24,9 +24,10 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
             }
             // normal expression 0 = value, 1 = action, 2 = value:
             else {
+                TerminalNode actionNode = (TerminalNode)ctx.getChild(1);
                 MovaValue left = visit(ctx.getChild(0));
                 MovaAction action = OperationsUtil.convertedAction(
-                        MovaParser.VOCABULARY.getSymbolicName(((MovaParser.ActionContext)ctx.getChild(1)).start.getType()));
+                        MovaParser.VOCABULARY.getSymbolicName((actionNode.getSymbol().getType())));
                 MovaValue right = visit(ctx.getChild(2));
                 return OperationsUtil.calculate(left, right, action);
             }

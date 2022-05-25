@@ -1,12 +1,8 @@
 package smthelusive.mova.util;
 
-import gen.MovaParser;
-import org.antlr.v4.runtime.tree.ParseTree;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
-
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public class OperationsUtil {
