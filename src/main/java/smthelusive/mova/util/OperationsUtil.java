@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public class OperationsUtil {
 
+    private static final String INCREMENT_DECREMENT_VALUE = "1";
+
     public static MovaValue calculate(MovaValue left, MovaValue right, MovaAction action) {
         MovaValue movaValue = new MovaValue();
         if (isStringContext(left, right, action)) {
@@ -33,8 +35,35 @@ public class OperationsUtil {
     }
 
     public static boolean isDoubleContext(MovaValue left, MovaValue right) {
-        return Optional.ofNullable(left.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.DECIMAL)) ||
-                Optional.ofNullable(right.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.DECIMAL));
+        return isDoubleContext(left) || isDoubleContext(right);
+    }
+
+    public static boolean isDoubleContext(MovaValue value) {
+        return Optional.ofNullable(value.getMovaType()).stream().anyMatch(type -> type.equals(MovaType.DECIMAL));
+    }
+
+    public static MovaValue increment(MovaValue value) {
+        return unaryOperation(value, MovaAction.PLUS);
+    }
+
+    public static MovaValue decrement(MovaValue value) {
+        return unaryOperation(value, MovaAction.MINUS);
+    }
+
+    private static MovaValue unaryOperation(MovaValue value, MovaAction action) {
+        MovaValue movaValue = new MovaValue();
+        if (isDoubleContext(value)) {
+            movaValue.setMovaType(MovaType.DECIMAL);
+            movaValue.setRawValue(performDoubleAction(value,
+                    new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE),
+                    action));
+        } else {
+            movaValue.setMovaType(MovaType.INTEGER);
+            movaValue.setRawValue(performIntegerAction(value,
+                    new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE),
+                    action));
+        }
+        return movaValue;
     }
 
     public static String performStringAction(MovaValue left, MovaValue right, MovaAction action) {
@@ -45,8 +74,7 @@ public class OperationsUtil {
             case WITH: return leftString + rightString;
             case PREFIX: return rightString + leftString;
         }
-        // todo log warning
-        return "";
+        return leftString;
     }
 
     public static String performDoubleAction(MovaValue left, MovaValue right, MovaAction action) {

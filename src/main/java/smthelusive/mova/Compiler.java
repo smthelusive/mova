@@ -1,5 +1,7 @@
 package smthelusive.mova;
 
+import smthelusive.mova.domain.MovaValue;
+
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -11,13 +13,13 @@ import java.util.Optional;
  *  - write the bytecode to a class file
  */
 public class Compiler {
-    private HashMap<String, String> variables = new HashMap<>();
+    private static final HashMap<String, MovaValue> variables = new HashMap<>();
 
-    public void registerVariable(String identifier, String value) {
+    public static void registerVariable(String identifier, MovaValue value) {
         variables.put(identifier, value);
     }
 
-    public Optional<String> getVariableValue(String identifier) {
+    public static Optional<MovaValue> getVariableValue(String identifier) {
         return Optional.ofNullable(variables.get(identifier));
     }
 

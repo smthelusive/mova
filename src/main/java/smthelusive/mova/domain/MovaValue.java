@@ -6,6 +6,11 @@ public class MovaValue {
 
     public MovaValue() {}
 
+    public MovaValue(MovaType movaType, String rawValue) {
+        this.movaType = movaType;
+        this.rawValue = rawValue;
+    }
+
     public void setMovaType(MovaType movaType) {
         this.movaType = movaType;
     }

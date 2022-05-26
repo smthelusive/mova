@@ -1,6 +1,7 @@
 package smthelusive.mova.visitor
 
 import smthelusive.mova.Compiler
+import smthelusive.mova.domain.MovaType
 import smthelusive.mova.gen.MovaLexer
 import smthelusive.mova.gen.MovaParser
 import org.antlr.v4.runtime.CharStreams
@@ -10,8 +11,7 @@ import spock.lang.Specification
 
 // todo fix failures on dots at decimals
 class ExpressionVisitorTest extends Specification {
-    Compiler compiler = new Compiler()
-    ExpressionVisitor expressionVisitor = new ExpressionVisitor(compiler)
+    ExpressionVisitor expressionVisitor = new ExpressionVisitor()
 
     def "expression visitor calculates one level expression with double context"() {
         when:
@@ -87,7 +87,7 @@ class ExpressionVisitorTest extends Specification {
 
     def "expression visitor evaluates the registered variable to process expression"() {
         when:
-        compiler.registerVariable("world", "universe")
+        Compiler.registerVariable("world", new MovaValue(MovaType.STRING,"universe"))
         MovaLexer lexer = new MovaLexer(CharStreams.fromString("world prefixed with \"hello \" prefixed with \"wow, \""))
         MovaParser parser = new MovaParser(new CommonTokenStream(lexer))
         MovaValue result = expressionVisitor.visit(parser.expression())

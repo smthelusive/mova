@@ -13,11 +13,6 @@ import java.util.Optional;
 
 public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
 
-    private final Compiler compiler;
-    public ExpressionVisitor(Compiler compiler) {
-        this.compiler = compiler;
-    }
-
     @Override
     public MovaValue visitExpression(MovaParser.ExpressionContext ctx) {
         int childrenCount = ctx.getChildCount();
@@ -53,9 +48,9 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
         movaValue.setRawValue(ctx.getText());
 
         if (ctx.IDENTIFIER() != null) {
-            Optional<String> maybeVariableValue = compiler.getVariableValue(ctx.getText());
+            Optional<MovaValue> maybeVariableValue = Compiler.getVariableValue(ctx.getText());
             if (maybeVariableValue.isPresent()) {
-                movaValue.setRawValue(maybeVariableValue.get());
+                return maybeVariableValue.get();
             } else {
                 movaValue.setMovaType(MovaType.STRING);
                 movaValue.setRawValue(ctx.getText());
