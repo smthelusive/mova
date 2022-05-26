@@ -3,8 +3,11 @@ package smthelusive.mova.gen;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MovaParser extends Parser {
@@ -18,18 +21,18 @@ public class MovaParser extends Parser {
 		MINUS=10, MULTIPLY=11, DIVIDE=12, PREFIX=13, SUFFIX=14, WITH=15, EQUALS=16, 
 		LPAREN=17, RPAREN=18, THEN=19, COLON=20, OR=21, AND=22, NOT=23, INCREMENT=24, 
 		DECREMENT=25, COMA=26, ALSO=27, DOT=28, MORETHAN=29, LESSTHAN=30, MOREOREQUAL=31, 
-		LESSOREQUAL=32, NOTEQUAL=33, IDENTIFIER=34, INTEGER=35, DECIMAL=36, STRING=37, 
+		LESSOREQUAL=32, NOTEQUAL=33, INTEGER=34, DECIMAL=35, STRING=36, IDENTIFIER=37, 
 		COMMENT=38, SLAVAUKRAINI=39;
 	public static final int
-		RULE_value = 0, RULE_action = 1, RULE_expression = 2, RULE_assignment = 3, 
-		RULE_output = 4, RULE_decrement = 5, RULE_increment = 6, RULE_slavaUkraini = 7, 
-		RULE_command = 8, RULE_condition = 9, RULE_conditional = 10, RULE_loop = 11, 
-		RULE_validStructure = 12, RULE_validProgram = 13;
+		RULE_value = 0, RULE_expression = 1, RULE_assignment = 2, RULE_output = 3, 
+		RULE_decrement = 4, RULE_increment = 5, RULE_slavaUkraini = 6, RULE_command = 7, 
+		RULE_condition = 8, RULE_conditional = 9, RULE_loop = 10, RULE_validStructure = 11, 
+		RULE_validProgram = 12;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"value", "action", "expression", "assignment", "output", "decrement", 
-			"increment", "slavaUkraini", "command", "condition", "conditional", "loop", 
-			"validStructure", "validProgram"
+			"value", "expression", "assignment", "output", "decrement", "increment", 
+			"slavaUkraini", "command", "condition", "conditional", "loop", "validStructure", 
+			"validProgram"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -48,7 +51,7 @@ public class MovaParser extends Parser {
 			"PLUS", "MINUS", "MULTIPLY", "DIVIDE", "PREFIX", "SUFFIX", "WITH", "EQUALS", 
 			"LPAREN", "RPAREN", "THEN", "COLON", "OR", "AND", "NOT", "INCREMENT", 
 			"DECREMENT", "COMA", "ALSO", "DOT", "MORETHAN", "LESSTHAN", "MOREOREQUAL", 
-			"LESSOREQUAL", "NOTEQUAL", "IDENTIFIER", "INTEGER", "DECIMAL", "STRING", 
+			"LESSOREQUAL", "NOTEQUAL", "INTEGER", "DECIMAL", "STRING", "IDENTIFIER", 
 			"COMMENT", "SLAVAUKRAINI"
 		};
 	}
@@ -113,14 +116,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_value; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterValue(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitValue(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitValue(this);
 			else return visitor.visitChildren(this);
@@ -134,66 +129,9 @@ public class MovaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(28);
+			setState(26);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IDENTIFIER) | (1L << INTEGER) | (1L << DECIMAL) | (1L << STRING))) != 0)) ) {
-			_errHandler.recoverInline(this);
-			}
-			else {
-				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-				_errHandler.reportMatch(this);
-				consume();
-			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class ActionContext extends ParserRuleContext {
-		public TerminalNode PLUS() { return getToken(MovaParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(MovaParser.MINUS, 0); }
-		public TerminalNode MULTIPLY() { return getToken(MovaParser.MULTIPLY, 0); }
-		public TerminalNode DIVIDE() { return getToken(MovaParser.DIVIDE, 0); }
-		public TerminalNode PREFIX() { return getToken(MovaParser.PREFIX, 0); }
-		public TerminalNode SUFFIX() { return getToken(MovaParser.SUFFIX, 0); }
-		public TerminalNode WITH() { return getToken(MovaParser.WITH, 0); }
-		public ActionContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_action; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterAction(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitAction(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitAction(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final ActionContext action() throws RecognitionException {
-		ActionContext _localctx = new ActionContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_action);
-		int _la;
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(30);
-			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << MULTIPLY) | (1L << DIVIDE) | (1L << PREFIX) | (1L << SUFFIX) | (1L << WITH))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << DECIMAL) | (1L << STRING) | (1L << IDENTIFIER))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -238,14 +176,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_expression; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitExpression(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitExpression(this);
 			else return visitor.visitChildren(this);
@@ -261,32 +191,32 @@ public class MovaParser extends Parser {
 		int _parentState = getState();
 		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);
 		ExpressionContext _prevctx = _localctx;
-		int _startState = 4;
-		enterRecursionRule(_localctx, 4, RULE_expression, _p);
+		int _startState = 2;
+		enterRecursionRule(_localctx, 2, RULE_expression, _p);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38);
+			setState(34);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAREN:
 				{
-				setState(33);
+				setState(29);
 				match(LPAREN);
-				setState(34);
+				setState(30);
 				expression(0);
-				setState(35);
+				setState(31);
 				match(RPAREN);
 				}
 				break;
-			case IDENTIFIER:
 			case INTEGER:
 			case DECIMAL:
 			case STRING:
+			case IDENTIFIER:
 				{
-				setState(37);
+				setState(33);
 				value();
 				}
 				break;
@@ -294,7 +224,7 @@ public class MovaParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(51);
+			setState(47);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -302,16 +232,16 @@ public class MovaParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(49);
+					setState(45);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(40);
+						setState(36);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(41);
+						setState(37);
 						_la = _input.LA(1);
 						if ( !(_la==MULTIPLY || _la==DIVIDE) ) {
 						_errHandler.recoverInline(this);
@@ -321,7 +251,7 @@ public class MovaParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(42);
+						setState(38);
 						expression(6);
 						}
 						break;
@@ -329,9 +259,9 @@ public class MovaParser extends Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(43);
+						setState(39);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(44);
+						setState(40);
 						_la = _input.LA(1);
 						if ( !(_la==PLUS || _la==MINUS) ) {
 						_errHandler.recoverInline(this);
@@ -341,7 +271,7 @@ public class MovaParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(45);
+						setState(41);
 						expression(5);
 						}
 						break;
@@ -349,9 +279,9 @@ public class MovaParser extends Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(46);
+						setState(42);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(47);
+						setState(43);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PREFIX) | (1L << SUFFIX) | (1L << WITH))) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -361,14 +291,14 @@ public class MovaParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(48);
+						setState(44);
 						expression(4);
 						}
 						break;
 					}
 					} 
 				}
-				setState(53);
+				setState(49);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -396,14 +326,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_assignment; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterAssignment(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitAssignment(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitAssignment(this);
 			else return visitor.visitChildren(this);
@@ -412,15 +334,15 @@ public class MovaParser extends Parser {
 
 	public final AssignmentContext assignment() throws RecognitionException {
 		AssignmentContext _localctx = new AssignmentContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_assignment);
+		enterRule(_localctx, 4, RULE_assignment);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(54);
+			setState(50);
 			match(IDENTIFIER);
-			setState(55);
+			setState(51);
 			match(EQUALS);
-			setState(56);
+			setState(52);
 			expression(0);
 			}
 		}
@@ -445,14 +367,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_output; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterOutput(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitOutput(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitOutput(this);
 			else return visitor.visitChildren(this);
@@ -461,13 +375,13 @@ public class MovaParser extends Parser {
 
 	public final OutputContext output() throws RecognitionException {
 		OutputContext _localctx = new OutputContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_output);
+		enterRule(_localctx, 6, RULE_output);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(58);
+			setState(54);
 			match(SHOW);
-			setState(59);
+			setState(55);
 			expression(0);
 			}
 		}
@@ -490,14 +404,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_decrement; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterDecrement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitDecrement(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitDecrement(this);
 			else return visitor.visitChildren(this);
@@ -506,13 +412,13 @@ public class MovaParser extends Parser {
 
 	public final DecrementContext decrement() throws RecognitionException {
 		DecrementContext _localctx = new DecrementContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_decrement);
+		enterRule(_localctx, 8, RULE_decrement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(61);
+			setState(57);
 			match(DECREMENT);
-			setState(62);
+			setState(58);
 			match(IDENTIFIER);
 			}
 		}
@@ -535,14 +441,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_increment; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterIncrement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitIncrement(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitIncrement(this);
 			else return visitor.visitChildren(this);
@@ -551,13 +449,13 @@ public class MovaParser extends Parser {
 
 	public final IncrementContext increment() throws RecognitionException {
 		IncrementContext _localctx = new IncrementContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_increment);
+		enterRule(_localctx, 10, RULE_increment);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
+			setState(60);
 			match(INCREMENT);
-			setState(65);
+			setState(61);
 			match(IDENTIFIER);
 			}
 		}
@@ -579,14 +477,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_slavaUkraini; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterSlavaUkraini(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitSlavaUkraini(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitSlavaUkraini(this);
 			else return visitor.visitChildren(this);
@@ -595,11 +485,11 @@ public class MovaParser extends Parser {
 
 	public final SlavaUkrainiContext slavaUkraini() throws RecognitionException {
 		SlavaUkrainiContext _localctx = new SlavaUkrainiContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_slavaUkraini);
+		enterRule(_localctx, 12, RULE_slavaUkraini);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(63);
 			match(SLAVAUKRAINI);
 			}
 		}
@@ -632,14 +522,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_command; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterCommand(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitCommand(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitCommand(this);
 			else return visitor.visitChildren(this);
@@ -648,34 +530,34 @@ public class MovaParser extends Parser {
 
 	public final CommandContext command() throws RecognitionException {
 		CommandContext _localctx = new CommandContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_command);
+		enterRule(_localctx, 14, RULE_command);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(73);
+			setState(69);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IDENTIFIER:
 				{
-				setState(69);
+				setState(65);
 				assignment();
 				}
 				break;
 			case DECREMENT:
 				{
-				setState(70);
+				setState(66);
 				decrement();
 				}
 				break;
 			case INCREMENT:
 				{
-				setState(71);
+				setState(67);
 				increment();
 				}
 				break;
 			case SHOW:
 				{
-				setState(72);
+				setState(68);
 				output();
 				}
 				break;
@@ -735,14 +617,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_condition; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterCondition(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitCondition(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitCondition(this);
 			else return visitor.visitChildren(this);
@@ -751,34 +625,34 @@ public class MovaParser extends Parser {
 
 	public final ConditionContext condition() throws RecognitionException {
 		ConditionContext _localctx = new ConditionContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_condition);
+		enterRule(_localctx, 16, RULE_condition);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(75);
+			setState(71);
 			expression(0);
-			setState(79);
+			setState(75);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==NOT) {
 				{
 				{
-				setState(76);
+				setState(72);
 				match(NOT);
 				}
 				}
-				setState(81);
+				setState(77);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(86);
+			setState(82);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUALS) | (1L << MORETHAN) | (1L << LESSTHAN) | (1L << MOREOREQUAL) | (1L << LESSOREQUAL) | (1L << NOTEQUAL))) != 0)) {
 				{
 				{
-				setState(82);
+				setState(78);
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUALS) | (1L << MORETHAN) | (1L << LESSTHAN) | (1L << MOREOREQUAL) | (1L << LESSOREQUAL) | (1L << NOTEQUAL))) != 0)) ) {
 				_errHandler.recoverInline(this);
@@ -788,11 +662,11 @@ public class MovaParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(83);
+				setState(79);
 				expression(0);
 				}
 				}
-				setState(88);
+				setState(84);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -855,14 +729,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_conditional; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterConditional(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitConditional(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitConditional(this);
 			else return visitor.visitChildren(this);
@@ -871,29 +737,29 @@ public class MovaParser extends Parser {
 
 	public final ConditionalContext conditional() throws RecognitionException {
 		ConditionalContext _localctx = new ConditionalContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_conditional);
+		enterRule(_localctx, 18, RULE_conditional);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(107); 
+			setState(103); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(89);
+				setState(85);
 				match(IF);
-				setState(90);
+				setState(86);
 				condition();
-				setState(95);
+				setState(91);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==OR || _la==AND) {
 					{
 					{
-					setState(91);
+					setState(87);
 					_la = _input.LA(1);
 					if ( !(_la==OR || _la==AND) ) {
 					_errHandler.recoverInline(this);
@@ -903,15 +769,15 @@ public class MovaParser extends Parser {
 						_errHandler.reportMatch(this);
 						consume();
 					}
-					setState(92);
+					setState(88);
 					condition();
 					}
 					}
-					setState(97);
+					setState(93);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(98);
+				setState(94);
 				_la = _input.LA(1);
 				if ( !(_la==THEN || _la==COLON) ) {
 				_errHandler.recoverInline(this);
@@ -921,63 +787,63 @@ public class MovaParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(99);
+				setState(95);
 				command();
-				setState(104);
+				setState(100);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(100);
+						setState(96);
 						match(ALSO);
-						setState(101);
+						setState(97);
 						command();
 						}
 						} 
 					}
-					setState(106);
+					setState(102);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
 				}
 				}
 				}
-				setState(109); 
+				setState(105); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==IF );
-			setState(122);
+			setState(118);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==OTHERWISE) {
 				{
 				{
-				setState(111);
+				setState(107);
 				match(OTHERWISE);
-				setState(112);
+				setState(108);
 				command();
-				setState(117);
+				setState(113);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(113);
+						setState(109);
 						match(ALSO);
-						setState(114);
+						setState(110);
 						command();
 						}
 						} 
 					}
-					setState(119);
+					setState(115);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 				}
 				}
 				}
-				setState(124);
+				setState(120);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1021,14 +887,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_loop; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterLoop(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitLoop(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitLoop(this);
 			else return visitor.visitChildren(this);
@@ -1037,20 +895,20 @@ public class MovaParser extends Parser {
 
 	public final LoopContext loop() throws RecognitionException {
 		LoopContext _localctx = new LoopContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_loop);
+		enterRule(_localctx, 20, RULE_loop);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(146);
+			setState(142);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DO:
 			case REPEAT:
 				{
 				{
-				setState(125);
+				setState(121);
 				_la = _input.LA(1);
 				if ( !(_la==DO || _la==REPEAT) ) {
 				_errHandler.recoverInline(this);
@@ -1060,19 +918,19 @@ public class MovaParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(131);
+				setState(127);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case LPAREN:
-				case IDENTIFIER:
 				case INTEGER:
 				case DECIMAL:
 				case STRING:
+				case IDENTIFIER:
 					{
 					{
-					setState(126);
+					setState(122);
 					expression(0);
-					setState(127);
+					setState(123);
 					match(TIMES);
 					}
 					}
@@ -1080,9 +938,9 @@ public class MovaParser extends Parser {
 				case UNTIL:
 					{
 					{
-					setState(129);
+					setState(125);
 					match(UNTIL);
-					setState(130);
+					setState(126);
 					condition();
 					}
 					}
@@ -1090,25 +948,25 @@ public class MovaParser extends Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				setState(133);
+				setState(129);
 				match(COLON);
-				setState(134);
+				setState(130);
 				command();
-				setState(139);
+				setState(135);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(135);
+						setState(131);
 						match(ALSO);
-						setState(136);
+						setState(132);
 						command();
 						}
 						} 
 					}
-					setState(141);
+					setState(137);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
 				}
@@ -1121,11 +979,11 @@ public class MovaParser extends Parser {
 			case IDENTIFIER:
 				{
 				{
-				setState(142);
+				setState(138);
 				command();
-				setState(143);
+				setState(139);
 				expression(0);
-				setState(144);
+				setState(140);
 				match(TIMES);
 				}
 				}
@@ -1175,14 +1033,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_validStructure; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterValidStructure(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitValidStructure(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitValidStructure(this);
 			else return visitor.visitChildren(this);
@@ -1191,10 +1041,10 @@ public class MovaParser extends Parser {
 
 	public final ValidStructureContext validStructure() throws RecognitionException {
 		ValidStructureContext _localctx = new ValidStructureContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_validStructure);
+		enterRule(_localctx, 22, RULE_validStructure);
 		int _la;
 		try {
-			setState(163);
+			setState(159);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DO:
@@ -1207,45 +1057,45 @@ public class MovaParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				{
-				setState(151);
+				setState(147);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 				case 1:
 					{
-					setState(148);
+					setState(144);
 					command();
 					}
 					break;
 				case 2:
 					{
-					setState(149);
+					setState(145);
 					conditional();
 					}
 					break;
 				case 3:
 					{
-					setState(150);
+					setState(146);
 					loop();
 					}
 					break;
 				}
-				setState(157);
+				setState(153);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==ALSO) {
 					{
 					{
-					setState(153);
+					setState(149);
 					match(ALSO);
-					setState(154);
+					setState(150);
 					validStructure();
 					}
 					}
-					setState(159);
+					setState(155);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(160);
+				setState(156);
 				match(DOT);
 				}
 				}
@@ -1253,7 +1103,7 @@ public class MovaParser extends Parser {
 			case SLAVAUKRAINI:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(162);
+				setState(158);
 				slavaUkraini();
 				}
 				break;
@@ -1285,14 +1135,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_validProgram; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterValidProgram(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitValidProgram(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitValidProgram(this);
 			else return visitor.visitChildren(this);
@@ -1301,26 +1143,26 @@ public class MovaParser extends Parser {
 
 	public final ValidProgramContext validProgram() throws RecognitionException {
 		ValidProgramContext _localctx = new ValidProgramContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_validProgram);
+		enterRule(_localctx, 24, RULE_validProgram);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(168);
+			setState(164);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << DO) | (1L << REPEAT) | (1L << IF) | (1L << SHOW) | (1L << INCREMENT) | (1L << DECREMENT) | (1L << IDENTIFIER) | (1L << SLAVAUKRAINI))) != 0)) {
 				{
 				{
-				setState(165);
+				setState(161);
 				validStructure();
 				}
 				}
-				setState(170);
+				setState(166);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(171);
+			setState(167);
 			match(EOF);
 			}
 		}
@@ -1337,7 +1179,7 @@ public class MovaParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 2:
+		case 1:
 			return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
@@ -1355,108 +1197,107 @@ public class MovaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\'\u00ae\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\'\u00aa\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
-		"\f\u0007\f\u0002\r\u0007\r\u0001\u0000\u0001\u0000\u0001\u0001\u0001\u0001"+
-		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002"+
-		"\u0003\u0002\'\b\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002"+
-		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0005\u0002"+
-		"2\b\u0002\n\u0002\f\u00025\t\u0002\u0001\u0003\u0001\u0003\u0001\u0003"+
+		"\f\u0007\f\u0001\u0000\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001#\b\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0005\u0001.\b\u0001\n\u0001\f\u00011\t\u0001"+
+		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0003\u0001\u0003"+
 		"\u0001\u0003\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005"+
-		"\u0001\u0005\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0007\u0001\u0007"+
-		"\u0001\b\u0001\b\u0001\b\u0001\b\u0003\bJ\b\b\u0001\t\u0001\t\u0005\t"+
-		"N\b\t\n\t\f\tQ\t\t\u0001\t\u0001\t\u0005\tU\b\t\n\t\f\tX\t\t\u0001\n\u0001"+
-		"\n\u0001\n\u0001\n\u0005\n^\b\n\n\n\f\na\t\n\u0001\n\u0001\n\u0001\n\u0001"+
-		"\n\u0005\ng\b\n\n\n\f\nj\t\n\u0004\nl\b\n\u000b\n\f\nm\u0001\n\u0001\n"+
-		"\u0001\n\u0001\n\u0005\nt\b\n\n\n\f\nw\t\n\u0005\ny\b\n\n\n\f\n|\t\n\u0001"+
-		"\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0003"+
-		"\u000b\u0084\b\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0005"+
-		"\u000b\u008a\b\u000b\n\u000b\f\u000b\u008d\t\u000b\u0001\u000b\u0001\u000b"+
-		"\u0001\u000b\u0001\u000b\u0003\u000b\u0093\b\u000b\u0001\f\u0001\f\u0001"+
-		"\f\u0003\f\u0098\b\f\u0001\f\u0001\f\u0005\f\u009c\b\f\n\f\f\f\u009f\t"+
-		"\f\u0001\f\u0001\f\u0001\f\u0003\f\u00a4\b\f\u0001\r\u0005\r\u00a7\b\r"+
-		"\n\r\f\r\u00aa\t\r\u0001\r\u0001\r\u0001\r\u0000\u0001\u0004\u000e\u0000"+
-		"\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u0000"+
-		"\t\u0001\u0000\"%\u0001\u0000\t\u000f\u0001\u0000\u000b\f\u0001\u0000"+
-		"\t\n\u0001\u0000\r\u000f\u0002\u0000\u0010\u0010\u001d!\u0001\u0000\u0015"+
-		"\u0016\u0001\u0000\u0013\u0014\u0002\u0000\u0002\u0002\u0005\u0005\u00b5"+
-		"\u0000\u001c\u0001\u0000\u0000\u0000\u0002\u001e\u0001\u0000\u0000\u0000"+
-		"\u0004&\u0001\u0000\u0000\u0000\u00066\u0001\u0000\u0000\u0000\b:\u0001"+
-		"\u0000\u0000\u0000\n=\u0001\u0000\u0000\u0000\f@\u0001\u0000\u0000\u0000"+
-		"\u000eC\u0001\u0000\u0000\u0000\u0010I\u0001\u0000\u0000\u0000\u0012K"+
-		"\u0001\u0000\u0000\u0000\u0014k\u0001\u0000\u0000\u0000\u0016\u0092\u0001"+
-		"\u0000\u0000\u0000\u0018\u00a3\u0001\u0000\u0000\u0000\u001a\u00a8\u0001"+
-		"\u0000\u0000\u0000\u001c\u001d\u0007\u0000\u0000\u0000\u001d\u0001\u0001"+
-		"\u0000\u0000\u0000\u001e\u001f\u0007\u0001\u0000\u0000\u001f\u0003\u0001"+
-		"\u0000\u0000\u0000 !\u0006\u0002\uffff\uffff\u0000!\"\u0005\u0011\u0000"+
-		"\u0000\"#\u0003\u0004\u0002\u0000#$\u0005\u0012\u0000\u0000$\'\u0001\u0000"+
-		"\u0000\u0000%\'\u0003\u0000\u0000\u0000& \u0001\u0000\u0000\u0000&%\u0001"+
-		"\u0000\u0000\u0000\'3\u0001\u0000\u0000\u0000()\n\u0005\u0000\u0000)*"+
-		"\u0007\u0002\u0000\u0000*2\u0003\u0004\u0002\u0006+,\n\u0004\u0000\u0000"+
-		",-\u0007\u0003\u0000\u0000-2\u0003\u0004\u0002\u0005./\n\u0003\u0000\u0000"+
-		"/0\u0007\u0004\u0000\u000002\u0003\u0004\u0002\u00041(\u0001\u0000\u0000"+
-		"\u00001+\u0001\u0000\u0000\u00001.\u0001\u0000\u0000\u000025\u0001\u0000"+
-		"\u0000\u000031\u0001\u0000\u0000\u000034\u0001\u0000\u0000\u00004\u0005"+
-		"\u0001\u0000\u0000\u000053\u0001\u0000\u0000\u000067\u0005\"\u0000\u0000"+
-		"78\u0005\u0010\u0000\u000089\u0003\u0004\u0002\u00009\u0007\u0001\u0000"+
-		"\u0000\u0000:;\u0005\b\u0000\u0000;<\u0003\u0004\u0002\u0000<\t\u0001"+
-		"\u0000\u0000\u0000=>\u0005\u0019\u0000\u0000>?\u0005\"\u0000\u0000?\u000b"+
-		"\u0001\u0000\u0000\u0000@A\u0005\u0018\u0000\u0000AB\u0005\"\u0000\u0000"+
-		"B\r\u0001\u0000\u0000\u0000CD\u0005\'\u0000\u0000D\u000f\u0001\u0000\u0000"+
-		"\u0000EJ\u0003\u0006\u0003\u0000FJ\u0003\n\u0005\u0000GJ\u0003\f\u0006"+
-		"\u0000HJ\u0003\b\u0004\u0000IE\u0001\u0000\u0000\u0000IF\u0001\u0000\u0000"+
-		"\u0000IG\u0001\u0000\u0000\u0000IH\u0001\u0000\u0000\u0000J\u0011\u0001"+
-		"\u0000\u0000\u0000KO\u0003\u0004\u0002\u0000LN\u0005\u0017\u0000\u0000"+
-		"ML\u0001\u0000\u0000\u0000NQ\u0001\u0000\u0000\u0000OM\u0001\u0000\u0000"+
-		"\u0000OP\u0001\u0000\u0000\u0000PV\u0001\u0000\u0000\u0000QO\u0001\u0000"+
-		"\u0000\u0000RS\u0007\u0005\u0000\u0000SU\u0003\u0004\u0002\u0000TR\u0001"+
-		"\u0000\u0000\u0000UX\u0001\u0000\u0000\u0000VT\u0001\u0000\u0000\u0000"+
-		"VW\u0001\u0000\u0000\u0000W\u0013\u0001\u0000\u0000\u0000XV\u0001\u0000"+
-		"\u0000\u0000YZ\u0005\u0006\u0000\u0000Z_\u0003\u0012\t\u0000[\\\u0007"+
-		"\u0006\u0000\u0000\\^\u0003\u0012\t\u0000][\u0001\u0000\u0000\u0000^a"+
-		"\u0001\u0000\u0000\u0000_]\u0001\u0000\u0000\u0000_`\u0001\u0000\u0000"+
-		"\u0000`b\u0001\u0000\u0000\u0000a_\u0001\u0000\u0000\u0000bc\u0007\u0007"+
-		"\u0000\u0000ch\u0003\u0010\b\u0000de\u0005\u001b\u0000\u0000eg\u0003\u0010"+
-		"\b\u0000fd\u0001\u0000\u0000\u0000gj\u0001\u0000\u0000\u0000hf\u0001\u0000"+
-		"\u0000\u0000hi\u0001\u0000\u0000\u0000il\u0001\u0000\u0000\u0000jh\u0001"+
-		"\u0000\u0000\u0000kY\u0001\u0000\u0000\u0000lm\u0001\u0000\u0000\u0000"+
-		"mk\u0001\u0000\u0000\u0000mn\u0001\u0000\u0000\u0000nz\u0001\u0000\u0000"+
-		"\u0000op\u0005\u0007\u0000\u0000pu\u0003\u0010\b\u0000qr\u0005\u001b\u0000"+
-		"\u0000rt\u0003\u0010\b\u0000sq\u0001\u0000\u0000\u0000tw\u0001\u0000\u0000"+
-		"\u0000us\u0001\u0000\u0000\u0000uv\u0001\u0000\u0000\u0000vy\u0001\u0000"+
-		"\u0000\u0000wu\u0001\u0000\u0000\u0000xo\u0001\u0000\u0000\u0000y|\u0001"+
-		"\u0000\u0000\u0000zx\u0001\u0000\u0000\u0000z{\u0001\u0000\u0000\u0000"+
-		"{\u0015\u0001\u0000\u0000\u0000|z\u0001\u0000\u0000\u0000}\u0083\u0007"+
-		"\b\u0000\u0000~\u007f\u0003\u0004\u0002\u0000\u007f\u0080\u0005\u0004"+
-		"\u0000\u0000\u0080\u0084\u0001\u0000\u0000\u0000\u0081\u0082\u0005\u0003"+
-		"\u0000\u0000\u0082\u0084\u0003\u0012\t\u0000\u0083~\u0001\u0000\u0000"+
-		"\u0000\u0083\u0081\u0001\u0000\u0000\u0000\u0084\u0085\u0001\u0000\u0000"+
-		"\u0000\u0085\u0086\u0005\u0014\u0000\u0000\u0086\u008b\u0003\u0010\b\u0000"+
-		"\u0087\u0088\u0005\u001b\u0000\u0000\u0088\u008a\u0003\u0010\b\u0000\u0089"+
-		"\u0087\u0001\u0000\u0000\u0000\u008a\u008d\u0001\u0000\u0000\u0000\u008b"+
-		"\u0089\u0001\u0000\u0000\u0000\u008b\u008c\u0001\u0000\u0000\u0000\u008c"+
-		"\u0093\u0001\u0000\u0000\u0000\u008d\u008b\u0001\u0000\u0000\u0000\u008e"+
-		"\u008f\u0003\u0010\b\u0000\u008f\u0090\u0003\u0004\u0002\u0000\u0090\u0091"+
-		"\u0005\u0004\u0000\u0000\u0091\u0093\u0001\u0000\u0000\u0000\u0092}\u0001"+
-		"\u0000\u0000\u0000\u0092\u008e\u0001\u0000\u0000\u0000\u0093\u0017\u0001"+
-		"\u0000\u0000\u0000\u0094\u0098\u0003\u0010\b\u0000\u0095\u0098\u0003\u0014"+
-		"\n\u0000\u0096\u0098\u0003\u0016\u000b\u0000\u0097\u0094\u0001\u0000\u0000"+
-		"\u0000\u0097\u0095\u0001\u0000\u0000\u0000\u0097\u0096\u0001\u0000\u0000"+
-		"\u0000\u0098\u009d\u0001\u0000\u0000\u0000\u0099\u009a\u0005\u001b\u0000"+
-		"\u0000\u009a\u009c\u0003\u0018\f\u0000\u009b\u0099\u0001\u0000\u0000\u0000"+
-		"\u009c\u009f\u0001\u0000\u0000\u0000\u009d\u009b\u0001\u0000\u0000\u0000"+
-		"\u009d\u009e\u0001\u0000\u0000\u0000\u009e\u00a0\u0001\u0000\u0000\u0000"+
-		"\u009f\u009d\u0001\u0000\u0000\u0000\u00a0\u00a1\u0005\u001c\u0000\u0000"+
-		"\u00a1\u00a4\u0001\u0000\u0000\u0000\u00a2\u00a4\u0003\u000e\u0007\u0000"+
-		"\u00a3\u0097\u0001\u0000\u0000\u0000\u00a3\u00a2\u0001\u0000\u0000\u0000"+
-		"\u00a4\u0019\u0001\u0000\u0000\u0000\u00a5\u00a7\u0003\u0018\f\u0000\u00a6"+
-		"\u00a5\u0001\u0000\u0000\u0000\u00a7\u00aa\u0001\u0000\u0000\u0000\u00a8"+
-		"\u00a6\u0001\u0000\u0000\u0000\u00a8\u00a9\u0001\u0000\u0000\u0000\u00a9"+
-		"\u00ab\u0001\u0000\u0000\u0000\u00aa\u00a8\u0001\u0000\u0000\u0000\u00ab"+
-		"\u00ac\u0005\u0000\u0000\u0001\u00ac\u001b\u0001\u0000\u0000\u0000\u0012"+
-		"&13IOV_hmuz\u0083\u008b\u0092\u0097\u009d\u00a3\u00a8";
+		"\u0001\u0005\u0001\u0006\u0001\u0006\u0001\u0007\u0001\u0007\u0001\u0007"+
+		"\u0001\u0007\u0003\u0007F\b\u0007\u0001\b\u0001\b\u0005\bJ\b\b\n\b\f\b"+
+		"M\t\b\u0001\b\u0001\b\u0005\bQ\b\b\n\b\f\bT\t\b\u0001\t\u0001\t\u0001"+
+		"\t\u0001\t\u0005\tZ\b\t\n\t\f\t]\t\t\u0001\t\u0001\t\u0001\t\u0001\t\u0005"+
+		"\tc\b\t\n\t\f\tf\t\t\u0004\th\b\t\u000b\t\f\ti\u0001\t\u0001\t\u0001\t"+
+		"\u0001\t\u0005\tp\b\t\n\t\f\ts\t\t\u0005\tu\b\t\n\t\f\tx\t\t\u0001\n\u0001"+
+		"\n\u0001\n\u0001\n\u0001\n\u0001\n\u0003\n\u0080\b\n\u0001\n\u0001\n\u0001"+
+		"\n\u0001\n\u0005\n\u0086\b\n\n\n\f\n\u0089\t\n\u0001\n\u0001\n\u0001\n"+
+		"\u0001\n\u0003\n\u008f\b\n\u0001\u000b\u0001\u000b\u0001\u000b\u0003\u000b"+
+		"\u0094\b\u000b\u0001\u000b\u0001\u000b\u0005\u000b\u0098\b\u000b\n\u000b"+
+		"\f\u000b\u009b\t\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0003\u000b"+
+		"\u00a0\b\u000b\u0001\f\u0005\f\u00a3\b\f\n\f\f\f\u00a6\t\f\u0001\f\u0001"+
+		"\f\u0001\f\u0000\u0001\u0002\r\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010"+
+		"\u0012\u0014\u0016\u0018\u0000\b\u0001\u0000\"%\u0001\u0000\u000b\f\u0001"+
+		"\u0000\t\n\u0001\u0000\r\u000f\u0002\u0000\u0010\u0010\u001d!\u0001\u0000"+
+		"\u0015\u0016\u0001\u0000\u0013\u0014\u0002\u0000\u0002\u0002\u0005\u0005"+
+		"\u00b2\u0000\u001a\u0001\u0000\u0000\u0000\u0002\"\u0001\u0000\u0000\u0000"+
+		"\u00042\u0001\u0000\u0000\u0000\u00066\u0001\u0000\u0000\u0000\b9\u0001"+
+		"\u0000\u0000\u0000\n<\u0001\u0000\u0000\u0000\f?\u0001\u0000\u0000\u0000"+
+		"\u000eE\u0001\u0000\u0000\u0000\u0010G\u0001\u0000\u0000\u0000\u0012g"+
+		"\u0001\u0000\u0000\u0000\u0014\u008e\u0001\u0000\u0000\u0000\u0016\u009f"+
+		"\u0001\u0000\u0000\u0000\u0018\u00a4\u0001\u0000\u0000\u0000\u001a\u001b"+
+		"\u0007\u0000\u0000\u0000\u001b\u0001\u0001\u0000\u0000\u0000\u001c\u001d"+
+		"\u0006\u0001\uffff\uffff\u0000\u001d\u001e\u0005\u0011\u0000\u0000\u001e"+
+		"\u001f\u0003\u0002\u0001\u0000\u001f \u0005\u0012\u0000\u0000 #\u0001"+
+		"\u0000\u0000\u0000!#\u0003\u0000\u0000\u0000\"\u001c\u0001\u0000\u0000"+
+		"\u0000\"!\u0001\u0000\u0000\u0000#/\u0001\u0000\u0000\u0000$%\n\u0005"+
+		"\u0000\u0000%&\u0007\u0001\u0000\u0000&.\u0003\u0002\u0001\u0006\'(\n"+
+		"\u0004\u0000\u0000()\u0007\u0002\u0000\u0000).\u0003\u0002\u0001\u0005"+
+		"*+\n\u0003\u0000\u0000+,\u0007\u0003\u0000\u0000,.\u0003\u0002\u0001\u0004"+
+		"-$\u0001\u0000\u0000\u0000-\'\u0001\u0000\u0000\u0000-*\u0001\u0000\u0000"+
+		"\u0000.1\u0001\u0000\u0000\u0000/-\u0001\u0000\u0000\u0000/0\u0001\u0000"+
+		"\u0000\u00000\u0003\u0001\u0000\u0000\u00001/\u0001\u0000\u0000\u0000"+
+		"23\u0005%\u0000\u000034\u0005\u0010\u0000\u000045\u0003\u0002\u0001\u0000"+
+		"5\u0005\u0001\u0000\u0000\u000067\u0005\b\u0000\u000078\u0003\u0002\u0001"+
+		"\u00008\u0007\u0001\u0000\u0000\u00009:\u0005\u0019\u0000\u0000:;\u0005"+
+		"%\u0000\u0000;\t\u0001\u0000\u0000\u0000<=\u0005\u0018\u0000\u0000=>\u0005"+
+		"%\u0000\u0000>\u000b\u0001\u0000\u0000\u0000?@\u0005\'\u0000\u0000@\r"+
+		"\u0001\u0000\u0000\u0000AF\u0003\u0004\u0002\u0000BF\u0003\b\u0004\u0000"+
+		"CF\u0003\n\u0005\u0000DF\u0003\u0006\u0003\u0000EA\u0001\u0000\u0000\u0000"+
+		"EB\u0001\u0000\u0000\u0000EC\u0001\u0000\u0000\u0000ED\u0001\u0000\u0000"+
+		"\u0000F\u000f\u0001\u0000\u0000\u0000GK\u0003\u0002\u0001\u0000HJ\u0005"+
+		"\u0017\u0000\u0000IH\u0001\u0000\u0000\u0000JM\u0001\u0000\u0000\u0000"+
+		"KI\u0001\u0000\u0000\u0000KL\u0001\u0000\u0000\u0000LR\u0001\u0000\u0000"+
+		"\u0000MK\u0001\u0000\u0000\u0000NO\u0007\u0004\u0000\u0000OQ\u0003\u0002"+
+		"\u0001\u0000PN\u0001\u0000\u0000\u0000QT\u0001\u0000\u0000\u0000RP\u0001"+
+		"\u0000\u0000\u0000RS\u0001\u0000\u0000\u0000S\u0011\u0001\u0000\u0000"+
+		"\u0000TR\u0001\u0000\u0000\u0000UV\u0005\u0006\u0000\u0000V[\u0003\u0010"+
+		"\b\u0000WX\u0007\u0005\u0000\u0000XZ\u0003\u0010\b\u0000YW\u0001\u0000"+
+		"\u0000\u0000Z]\u0001\u0000\u0000\u0000[Y\u0001\u0000\u0000\u0000[\\\u0001"+
+		"\u0000\u0000\u0000\\^\u0001\u0000\u0000\u0000][\u0001\u0000\u0000\u0000"+
+		"^_\u0007\u0006\u0000\u0000_d\u0003\u000e\u0007\u0000`a\u0005\u001b\u0000"+
+		"\u0000ac\u0003\u000e\u0007\u0000b`\u0001\u0000\u0000\u0000cf\u0001\u0000"+
+		"\u0000\u0000db\u0001\u0000\u0000\u0000de\u0001\u0000\u0000\u0000eh\u0001"+
+		"\u0000\u0000\u0000fd\u0001\u0000\u0000\u0000gU\u0001\u0000\u0000\u0000"+
+		"hi\u0001\u0000\u0000\u0000ig\u0001\u0000\u0000\u0000ij\u0001\u0000\u0000"+
+		"\u0000jv\u0001\u0000\u0000\u0000kl\u0005\u0007\u0000\u0000lq\u0003\u000e"+
+		"\u0007\u0000mn\u0005\u001b\u0000\u0000np\u0003\u000e\u0007\u0000om\u0001"+
+		"\u0000\u0000\u0000ps\u0001\u0000\u0000\u0000qo\u0001\u0000\u0000\u0000"+
+		"qr\u0001\u0000\u0000\u0000ru\u0001\u0000\u0000\u0000sq\u0001\u0000\u0000"+
+		"\u0000tk\u0001\u0000\u0000\u0000ux\u0001\u0000\u0000\u0000vt\u0001\u0000"+
+		"\u0000\u0000vw\u0001\u0000\u0000\u0000w\u0013\u0001\u0000\u0000\u0000"+
+		"xv\u0001\u0000\u0000\u0000y\u007f\u0007\u0007\u0000\u0000z{\u0003\u0002"+
+		"\u0001\u0000{|\u0005\u0004\u0000\u0000|\u0080\u0001\u0000\u0000\u0000"+
+		"}~\u0005\u0003\u0000\u0000~\u0080\u0003\u0010\b\u0000\u007fz\u0001\u0000"+
+		"\u0000\u0000\u007f}\u0001\u0000\u0000\u0000\u0080\u0081\u0001\u0000\u0000"+
+		"\u0000\u0081\u0082\u0005\u0014\u0000\u0000\u0082\u0087\u0003\u000e\u0007"+
+		"\u0000\u0083\u0084\u0005\u001b\u0000\u0000\u0084\u0086\u0003\u000e\u0007"+
+		"\u0000\u0085\u0083\u0001\u0000\u0000\u0000\u0086\u0089\u0001\u0000\u0000"+
+		"\u0000\u0087\u0085\u0001\u0000\u0000\u0000\u0087\u0088\u0001\u0000\u0000"+
+		"\u0000\u0088\u008f\u0001\u0000\u0000\u0000\u0089\u0087\u0001\u0000\u0000"+
+		"\u0000\u008a\u008b\u0003\u000e\u0007\u0000\u008b\u008c\u0003\u0002\u0001"+
+		"\u0000\u008c\u008d\u0005\u0004\u0000\u0000\u008d\u008f\u0001\u0000\u0000"+
+		"\u0000\u008ey\u0001\u0000\u0000\u0000\u008e\u008a\u0001\u0000\u0000\u0000"+
+		"\u008f\u0015\u0001\u0000\u0000\u0000\u0090\u0094\u0003\u000e\u0007\u0000"+
+		"\u0091\u0094\u0003\u0012\t\u0000\u0092\u0094\u0003\u0014\n\u0000\u0093"+
+		"\u0090\u0001\u0000\u0000\u0000\u0093\u0091\u0001\u0000\u0000\u0000\u0093"+
+		"\u0092\u0001\u0000\u0000\u0000\u0094\u0099\u0001\u0000\u0000\u0000\u0095"+
+		"\u0096\u0005\u001b\u0000\u0000\u0096\u0098\u0003\u0016\u000b\u0000\u0097"+
+		"\u0095\u0001\u0000\u0000\u0000\u0098\u009b\u0001\u0000\u0000\u0000\u0099"+
+		"\u0097\u0001\u0000\u0000\u0000\u0099\u009a\u0001\u0000\u0000\u0000\u009a"+
+		"\u009c\u0001\u0000\u0000\u0000\u009b\u0099\u0001\u0000\u0000\u0000\u009c"+
+		"\u009d\u0005\u001c\u0000\u0000\u009d\u00a0\u0001\u0000\u0000\u0000\u009e"+
+		"\u00a0\u0003\f\u0006\u0000\u009f\u0093\u0001\u0000\u0000\u0000\u009f\u009e"+
+		"\u0001\u0000\u0000\u0000\u00a0\u0017\u0001\u0000\u0000\u0000\u00a1\u00a3"+
+		"\u0003\u0016\u000b\u0000\u00a2\u00a1\u0001\u0000\u0000\u0000\u00a3\u00a6"+
+		"\u0001\u0000\u0000\u0000\u00a4\u00a2\u0001\u0000\u0000\u0000\u00a4\u00a5"+
+		"\u0001\u0000\u0000\u0000\u00a5\u00a7\u0001\u0000\u0000\u0000\u00a6\u00a4"+
+		"\u0001\u0000\u0000\u0000\u00a7\u00a8\u0005\u0000\u0000\u0001\u00a8\u0019"+
+		"\u0001\u0000\u0000\u0000\u0012\"-/EKR[diqv\u007f\u0087\u008e\u0093\u0099"+
+		"\u009f\u00a4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

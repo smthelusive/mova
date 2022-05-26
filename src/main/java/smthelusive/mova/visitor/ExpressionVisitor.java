@@ -7,8 +7,16 @@ import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.util.OperationsUtil;
+import smthelusive.mova.Compiler;
+
+import java.util.Optional;
 
 public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
+
+    private final Compiler compiler;
+    public ExpressionVisitor(Compiler compiler) {
+        this.compiler = compiler;
+    }
 
     @Override
     public MovaValue visitExpression(MovaParser.ExpressionContext ctx) {
@@ -43,6 +51,16 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
         if (ctx.INTEGER() != null) movaValue.setMovaType(MovaType.INTEGER);
         if (ctx.STRING() != null) movaValue.setMovaType(MovaType.STRING);
         movaValue.setRawValue(ctx.getText());
+
+        if (ctx.IDENTIFIER() != null) {
+            Optional<String> maybeVariableValue = compiler.getVariableValue(ctx.getText());
+            if (maybeVariableValue.isPresent()) {
+                movaValue.setRawValue(maybeVariableValue.get());
+            } else {
+                movaValue.setMovaType(MovaType.STRING);
+                movaValue.setRawValue(ctx.getText());
+            }
+        }
         return movaValue;
     }
 }

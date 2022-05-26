@@ -17,12 +17,6 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValue(MovaParser.ValueContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MovaParser#action}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAction(MovaParser.ActionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MovaParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

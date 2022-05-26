@@ -45,11 +45,10 @@ fragment DIGIT     : [0-9] ;
 fragment SYMBOL    : [A-Za-z0-9_] ;
 fragment ESCAPE_CHAR : '\\' [0btnfr"'\\] ;
 
-IDENTIFIER         : SYMBOL+ ;
-
 INTEGER            : '-'? DIGIT+ ;
 DECIMAL            : '-'? DIGIT+ COMA DIGIT+ ;
 STRING             : '"' ( ~[\\"\r\n] | ESCAPE_CHAR )* '"' ;
+IDENTIFIER         : SYMBOL+ ;
 
 COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip ;
 

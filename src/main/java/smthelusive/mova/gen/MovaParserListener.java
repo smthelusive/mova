@@ -21,16 +21,6 @@ public interface MovaParserListener extends ParseTreeListener {
 	 * Enter a parse tree produced by {@link MovaParser#action}.
 	 * @param ctx the parse tree
 	 */
-	void enterAction(MovaParser.ActionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MovaParser#action}.
-	 * @param ctx the parse tree
-	 */
-	void exitAction(MovaParser.ActionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MovaParser#expression}.
-	 * @param ctx the parse tree
-	 */
 	void enterExpression(MovaParser.ExpressionContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MovaParser#expression}.
