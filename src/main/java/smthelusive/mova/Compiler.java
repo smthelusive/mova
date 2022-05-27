@@ -15,6 +15,8 @@ import java.util.Optional;
 public class Compiler {
     private static final HashMap<String, MovaValue> variables = new HashMap<>();
 
+    // todo queue with instructions
+
     public static void registerVariable(String identifier, MovaValue value) {
         variables.put(identifier, value);
     }
@@ -22,5 +24,4 @@ public class Compiler {
     public static Optional<MovaValue> getVariableValue(String identifier) {
         return Optional.ofNullable(variables.get(identifier));
     }
-
 }
