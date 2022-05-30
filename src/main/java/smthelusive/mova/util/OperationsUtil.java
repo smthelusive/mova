@@ -24,8 +24,8 @@ public class OperationsUtil {
         return movaValue;
     }
 
-    private static String clean(String quotedString) {
-        return quotedString.replaceAll("\"", "");
+    public static String clean(String quotedString) {
+        return quotedString.replaceAll("^\"|\"$", "");
     }
 
     public static boolean isStringContext(MovaValue left, MovaValue right, MovaAction action) {

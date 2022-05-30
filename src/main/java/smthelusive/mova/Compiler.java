@@ -36,7 +36,8 @@ public class Compiler {
             try {
                 MovaLexer lexer = new MovaLexer(CharStreams.fromFileName(inputFile));
                 MovaParser parser = new MovaParser(new CommonTokenStream(lexer));
-                String programName = inputFile.replace(".mova", "");
+                String[] filename = inputFile.split("/");
+                String programName = filename[filename.length - 1].replace(".mova", "");
                 bytecodeGenerator.init(programName);
                 MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(bytecodeGenerator);
                 movaProgramVisitor.visit(parser.validProgram());

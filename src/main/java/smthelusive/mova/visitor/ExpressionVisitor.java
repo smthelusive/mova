@@ -45,7 +45,7 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<MovaValue> {
         if (ctx.DECIMAL() != null) movaValue.setMovaType(MovaType.DECIMAL);
         if (ctx.INTEGER() != null) movaValue.setMovaType(MovaType.INTEGER);
         if (ctx.STRING() != null) movaValue.setMovaType(MovaType.STRING);
-        movaValue.setRawValue(ctx.getText());
+        movaValue.setRawValue(OperationsUtil.clean(ctx.getText()));
 
         if (ctx.IDENTIFIER() != null) {
             Optional<MovaValue> maybeVariableValue = Compiler.getVariableValue(ctx.getText());

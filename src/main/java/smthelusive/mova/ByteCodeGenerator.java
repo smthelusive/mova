@@ -34,24 +34,28 @@ public class ByteCodeGenerator {
      */
     public void addVariableAssignment(String identifier, MovaValue movaValue) {
         ByteCodeVariable byteCodeVariable = new ByteCodeVariable();
+        int opcode = 0;
         switch (movaValue.getMovaType()) {
             case STRING:
                 byteCodeVariable.setValue(movaValue.getStringValue());
                 byteCodeVariable.setDescriptor("Ljava/lang/String;");
+                opcode = Opcodes.ASTORE;
                 break;
             case INTEGER:
                 byteCodeVariable.setValue(movaValue.getIntegerValue());
                 byteCodeVariable.setDescriptor("I");
+                opcode = Opcodes.ISTORE;
                 break;
             case DECIMAL:
                 byteCodeVariable.setValue(movaValue.getDoubleValue());
                 byteCodeVariable.setDescriptor("D");
+                opcode = Opcodes.DSTORE;
                 break;
         }
         byteCodeVariable.setId(variableIndex);
 
         mv.visitLdcInsn(byteCodeVariable.getValue());
-        mv.visitVarInsn(Opcodes.ASTORE, variableIndex);
+        mv.visitVarInsn(opcode, variableIndex);
 
         byteCodeVariables.put(identifier, byteCodeVariable);
         variableIndex++;
@@ -85,6 +89,7 @@ public class ByteCodeGenerator {
      */
     public byte[] cleanCloseProgram() {
         mv.visitInsn(Opcodes.RETURN);
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
         cw.visitEnd();
         return cw.toByteArray();
