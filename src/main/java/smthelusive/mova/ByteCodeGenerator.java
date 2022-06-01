@@ -3,6 +3,7 @@ package smthelusive.mova;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import smthelusive.mova.domain.ByteCodeVariable;
 import smthelusive.mova.domain.MovaValue;
 
@@ -21,9 +22,9 @@ public class ByteCodeGenerator {
      * @param name the name of the program
      */
     public void init(String name) {
-        cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, name, null, "java/lang/Object", null);
+        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, Type.getType(Object.class).getClassName(), null);
         mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main",
-                "([Ljava/lang/String;)V", null, null);
+             "([" + Type.getType(String.class).getDescriptor() + ")V", null, null);
         mv.visitCode();
     }
 
@@ -38,17 +39,17 @@ public class ByteCodeGenerator {
         switch (movaValue.getMovaType()) {
             case STRING:
                 byteCodeVariable.setValue(movaValue.getStringValue());
-                byteCodeVariable.setDescriptor("Ljava/lang/String;");
+                byteCodeVariable.setDescriptor(Type.getType(String.class).getDescriptor());
                 opcode = Opcodes.ASTORE;
                 break;
             case INTEGER:
                 byteCodeVariable.setValue(movaValue.getIntegerValue());
-                byteCodeVariable.setDescriptor("I");
+                byteCodeVariable.setDescriptor(Type.INT_TYPE.getDescriptor());
                 opcode = Opcodes.ISTORE;
                 break;
             case DECIMAL:
                 byteCodeVariable.setValue(movaValue.getDoubleValue());
-                byteCodeVariable.setDescriptor("D");
+                byteCodeVariable.setDescriptor(Type.DOUBLE_TYPE.getDescriptor());
                 opcode = Opcodes.DSTORE;
                 break;
         }

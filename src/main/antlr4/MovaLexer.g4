@@ -31,7 +31,7 @@ NOT                : 'not' | '!' ;
 INCREMENT          : 'increment' | '++' ;
 DECREMENT          : 'decrement' | '--' ;
 
-COMA               : ',' ;
+COMMA              : ',' ;
 ALSO               : ';' | 'also' ;
 DOT                : '.' ;
 
@@ -46,7 +46,7 @@ fragment SYMBOL    : [A-Za-z0-9_] ;
 fragment ESCAPE_CHAR : '\\' [0btnfr"'\\] ;
 
 INTEGER            : '-'? DIGIT+ ;
-DECIMAL            : '-'? DIGIT+ COMA DIGIT+ ;
+DECIMAL            : '-'? DIGIT+ COMMA DIGIT+ ;
 STRING             : '"' ( ~[\\"\r\n] | ESCAPE_CHAR )* '"' ;
 IDENTIFIER         : SYMBOL+ ;
 
