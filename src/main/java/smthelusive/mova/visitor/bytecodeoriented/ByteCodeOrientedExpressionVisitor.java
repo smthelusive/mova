@@ -47,7 +47,7 @@ public class ByteCodeOrientedExpressionVisitor extends MovaParserBaseVisitor<Voi
     public Void visitValue(MovaParser.ValueContext ctx) {
         if (ctx.IDENTIFIER() != null) {
             smartBytecodeGenerator.loadVariableToOpStack(ctx.getText());
-            return super.visitValue(ctx);
+            return null;
         }
 
         MovaValue movaValue = new MovaValue();

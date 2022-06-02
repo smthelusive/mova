@@ -7,10 +7,13 @@ import org.objectweb.asm.Type;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
+import smthelusive.mova.domain.RegistryVariable;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
+// todo overwriting variables
 public class SmartByteCodeGenerator {
 
     private MovaType currentContext;
@@ -18,7 +21,7 @@ public class SmartByteCodeGenerator {
     private final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     private int variableIndex = 1;
     private MethodVisitor mv;
-    private final Map<String, Integer> byteCodeVariableRegistry = new HashMap<>();
+    private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
 
     /***
      * the strongest context is String, then goes Decimal, the last is Integer
@@ -28,11 +31,13 @@ public class SmartByteCodeGenerator {
      */
     public void processContext(MovaType movaType) {
         if (contextLocked) {
-            contextLocked = false;
-            if (movaType == MovaType.INTEGER && currentContext != MovaType.DECIMAL && currentContext != MovaType.STRING)
-                currentContext = MovaType.INTEGER;
-            else if (movaType == MovaType.DECIMAL && currentContext != MovaType.STRING)
+            if (movaType == MovaType.DECIMAL && currentContext != MovaType.STRING) {
+                if (currentContext == MovaType.INTEGER) {
+                    // convert previous value to be able to perform double operation
+                    mv.visitInsn(Opcodes.I2D);
+                }
                 currentContext = MovaType.DECIMAL;
+            }
             else if (movaType == MovaType.STRING)
                 currentContext = MovaType.STRING;
         } else currentContext = movaType;
@@ -58,7 +63,7 @@ public class SmartByteCodeGenerator {
      * @param name the name of the program
      */
     public void init(String name) {
-        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, Type.getType(Object.class).getClassName(), null);
+        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, "java/lang/Object", null);
         mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main",
              "([" + Type.getType(String.class).getDescriptor() + ")V", null, null);
         mv.visitCode();
@@ -79,20 +84,51 @@ public class SmartByteCodeGenerator {
         }
 
         mv.visitVarInsn(opcode, variableIndex);
-        byteCodeVariableRegistry.put(identifier, variableIndex);
+        byteCodeVariableRegistry.put(identifier, new RegistryVariable(variableIndex, currentContext));
         variableIndex++;
+        // double takes 2 slots:
+        if (opcode == Opcodes.DSTORE) {
+            variableIndex++;
+        }
     }
 
+    /***
+     * todo
+     */
     public void printlnValueOnTopOfOpStack() {
-        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", "Ljava/io/PrintStream;");
-        mv.visitInsn(Opcodes.SWAP);
+        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
+        if (currentContext == MovaType.DECIMAL) {
+            mv.visitInsn(Opcodes.DUP_X2);
+            mv.visitInsn(Opcodes.POP);
+        } else {
+            mv.visitInsn(Opcodes.SWAP);
+        }
+
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
+                String.format("(%s)V", getContextDescriptor()), false);
+    }
+
+    public void printVariable(String identifier) {
+        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
+        loadVariableToOpStack(identifier);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
                 String.format("(%s)V", getContextDescriptor()), false);
     }
 
     public void loadVariableToOpStack(String identifier) {
-        int varId = byteCodeVariableRegistry.get(identifier);
-        mv.visitVarInsn(Opcodes.ALOAD, varId); // todo is it really ALOAD? how do I get exact type?
+        RegistryVariable registryVariable = byteCodeVariableRegistry.get(identifier);
+        processContext(registryVariable.getType());
+        int opcodes;
+        switch (registryVariable.getType()) {
+            case INTEGER: opcodes = Opcodes.ILOAD;
+            break;
+            case DECIMAL: opcodes = Opcodes.DLOAD;
+            break;
+            case STRING:
+            default: opcodes = Opcodes.ALOAD;
+        }
+        mv.visitVarInsn(opcodes, registryVariable.getId());
+        // todo if current context is string, store the string in opstack
     }
 
     public void pushValueToOpstack(MovaValue value) {
@@ -106,23 +142,29 @@ public class SmartByteCodeGenerator {
         }
     }
 
+    // integer increment todo rewrite
+    public void incrementVariable(String identifier) {
+        mv.visitIincInsn(byteCodeVariableRegistry.get(identifier).getId(), 1);
+    }
+
     public void performBytecodeOperation(MovaAction action) {
+        contextLocked = false;
         switch (action) {
             case PLUS:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IADD);
-                else if (currentContext == MovaType.DECIMAL) mv.visitLdcInsn(Opcodes.DADD);
+                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DADD);
                 break;
             case MINUS:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.ISUB);
-                else if (currentContext == MovaType.DECIMAL) mv.visitLdcInsn(Opcodes.DSUB);
+                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DSUB);
                 break;
             case MULTIPLY:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IMUL);
-                else if (currentContext == MovaType.DECIMAL) mv.visitLdcInsn(Opcodes.DMUL);
+                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DMUL);
                 break;
             case DIVIDE:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IDIV);
-                else if (currentContext == MovaType.DECIMAL) mv.visitLdcInsn(Opcodes.DDIV);
+                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DDIV);
                 break;
             default:
         }

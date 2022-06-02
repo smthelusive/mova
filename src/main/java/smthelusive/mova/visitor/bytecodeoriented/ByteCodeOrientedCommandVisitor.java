@@ -30,7 +30,7 @@ public class ByteCodeOrientedCommandVisitor extends MovaParserBaseVisitor<Void> 
         MovaParser.ExpressionContext expressionContext = ctx.expression();
         expressionVisitor.visitExpression(expressionContext);
         smartByteCodeGenerator.printlnValueOnTopOfOpStack();
-        return super.visitOutput(ctx);
+        return null;
     }
 
     @Override

@@ -1,2 +1,4 @@
-a is 1 + (1 + 5) * 18.
+dec is (0,5 + 1) * 0,89.
+a = dec.
+show dec.
 show a.
