@@ -1,4 +1,4 @@
-package smthelusive.mova.visitor.bytecodeoriented;
+package smthelusive.mova.visitors;
 
 import smthelusive.mova.SmartByteCodeGenerator;
 import smthelusive.mova.domain.MovaType;

@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import smthelusive.mova.gen.MovaLexer;
 import smthelusive.mova.gen.MovaParser;
-import smthelusive.mova.visitor.bytecodeoriented.ByteCodeOrientedMovaProgramVisitor;
+import smthelusive.mova.visitors.ByteCodeOrientedMovaProgramVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

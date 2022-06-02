@@ -1,4 +1,4 @@
-package smthelusive.mova.visitor;
+package smthelusive.mova.v1.visitors;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import smthelusive.mova.gen.MovaParser;
@@ -7,7 +7,7 @@ import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.util.OperationsUtil;
-import smthelusive.mova.Compiler;
+import smthelusive.mova.v1.Compiler;
 
 import java.util.Optional;
 

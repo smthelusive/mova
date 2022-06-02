@@ -1,4 +1,4 @@
-package smthelusive.mova.visitor.bytecodeoriented;
+package smthelusive.mova.visitors;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import smthelusive.mova.SmartByteCodeGenerator;

@@ -1,12 +1,13 @@
-package smthelusive.mova.visitor
+package smthelusive.mova.v1.visitors
 
-import smthelusive.mova.Compiler
+import smthelusive.mova.v1.Compiler
 import smthelusive.mova.domain.MovaType
 import smthelusive.mova.gen.MovaLexer
 import smthelusive.mova.gen.MovaParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import smthelusive.mova.domain.MovaValue
+import smthelusive.mova.v1.visitors.ExpressionVisitor
 import spock.lang.Specification
 
 // todo fix failures on dots at decimals

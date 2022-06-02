@@ -1,7 +1,7 @@
-package smthelusive.mova.visitor;
+package smthelusive.mova.v1.visitors;
 
-import smthelusive.mova.ByteCodeGenerator;
-import smthelusive.mova.Compiler;
+import smthelusive.mova.v1.ByteCodeGenerator;
+import smthelusive.mova.v1.Compiler;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;

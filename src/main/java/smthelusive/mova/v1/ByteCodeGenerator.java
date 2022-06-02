@@ -1,10 +1,10 @@
-package smthelusive.mova;
+package smthelusive.mova.v1;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import smthelusive.mova.domain.ByteCodeVariable;
+import smthelusive.mova.v1.domain.ByteCodeVariable;
 import smthelusive.mova.domain.MovaValue;
 
 import java.util.HashMap;

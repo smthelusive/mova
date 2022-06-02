@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-// todo overwriting variables
+// todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
 
     private MovaType currentContext;
@@ -87,7 +87,7 @@ public class SmartByteCodeGenerator {
         byteCodeVariableRegistry.put(identifier, new RegistryVariable(variableIndex, currentContext));
         variableIndex++;
         // double takes 2 slots:
-        if (opcode == Opcodes.DSTORE) {
+        if (currentContext == MovaType.DECIMAL) {
             variableIndex++;
         }
     }
@@ -97,6 +97,9 @@ public class SmartByteCodeGenerator {
      */
     public void printlnValueOnTopOfOpStack() {
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
+
+        // bring the value we want to print back on the top of stack.
+        // depending on type it is 1 or 2 slots.
         if (currentContext == MovaType.DECIMAL) {
             mv.visitInsn(Opcodes.DUP_X2);
             mv.visitInsn(Opcodes.POP);

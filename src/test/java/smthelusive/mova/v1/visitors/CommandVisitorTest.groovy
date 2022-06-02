@@ -1,12 +1,13 @@
-package smthelusive.mova.visitor
+package smthelusive.mova.v1.visitors
 
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import smthelusive.mova.Compiler
+import smthelusive.mova.v1.Compiler
 import smthelusive.mova.domain.MovaType
 import smthelusive.mova.domain.MovaValue
 import smthelusive.mova.gen.MovaLexer
 import smthelusive.mova.gen.MovaParser
+import smthelusive.mova.v1.visitors.CommandVisitor
 import spock.lang.Specification
 
 class CommandVisitorTest extends Specification {

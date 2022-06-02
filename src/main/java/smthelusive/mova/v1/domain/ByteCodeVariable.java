@@ -1,4 +1,4 @@
-package smthelusive.mova.domain;
+package smthelusive.mova.v1.domain;
 
 public class ByteCodeVariable {
     private String descriptor;

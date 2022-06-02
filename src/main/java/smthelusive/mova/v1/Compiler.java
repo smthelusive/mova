@@ -1,11 +1,11 @@
-package smthelusive.mova;
+package smthelusive.mova.v1;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaLexer;
 import smthelusive.mova.gen.MovaParser;
-import smthelusive.mova.visitor.MovaProgramVisitor;
+import smthelusive.mova.v1.visitors.MovaProgramVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
