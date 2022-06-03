@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static smthelusive.mova.domain.MovaAction.SUFFIX;
-
 // todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
 
@@ -51,6 +49,7 @@ public class SmartByteCodeGenerator {
         }
     }
 
+    // todo refactor a little
     private void switchContextToString() {
         if (currentContext == MovaType.INTEGER) {
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String",
@@ -118,7 +117,7 @@ public class SmartByteCodeGenerator {
      */
     public void printlnValueOnTopOfOpStack() {
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
-        // bring the value we want to print back on the top of stack.
+        // bring the value we want to print back on the top of stack:
         swap();
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
                 String.format("(%s)V", getContextDescriptor()), false);
@@ -132,7 +131,6 @@ public class SmartByteCodeGenerator {
         } else {
             mv.visitInsn(Opcodes.SWAP);
         }
-        // todo strings?
     }
 
     public void printVariable(String identifier) {
