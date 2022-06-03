@@ -31,16 +31,20 @@ public class SmartByteCodeGenerator {
      */
     public void processContext(MovaType movaType) {
         if (contextLocked) {
-            if (movaType == MovaType.DECIMAL && currentContext != MovaType.STRING) {
-                if (currentContext == MovaType.INTEGER) {
-                    // convert previous value to be able to perform double operation
-                    mv.visitInsn(Opcodes.I2D);
-                }
-                currentContext = MovaType.DECIMAL;
-            }
-            else if (movaType == MovaType.STRING)
+            if (movaType == MovaType.DECIMAL) {
+                switchContextToDecimal();
+            } else if (movaType == MovaType.STRING) {
                 currentContext = MovaType.STRING;
+            }
         } else currentContext = movaType;
+    }
+
+    private void switchContextToDecimal() {
+        if (currentContext == MovaType.INTEGER) {
+            // convert previous value to be able to perform double operation
+            mv.visitInsn(Opcodes.I2D);
+            currentContext = MovaType.DECIMAL;
+        }
     }
 
     public void lockContext() {
@@ -97,8 +101,13 @@ public class SmartByteCodeGenerator {
      */
     public void printlnValueOnTopOfOpStack() {
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
-
         // bring the value we want to print back on the top of stack.
+        swap();
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
+                String.format("(%s)V", getContextDescriptor()), false);
+    }
+
+    private void swap() {
         // depending on type it is 1 or 2 slots.
         if (currentContext == MovaType.DECIMAL) {
             mv.visitInsn(Opcodes.DUP_X2);
@@ -106,9 +115,6 @@ public class SmartByteCodeGenerator {
         } else {
             mv.visitInsn(Opcodes.SWAP);
         }
-
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
-                String.format("(%s)V", getContextDescriptor()), false);
     }
 
     public void printVariable(String identifier) {
@@ -134,7 +140,7 @@ public class SmartByteCodeGenerator {
         // todo if current context is string, store the string in opstack
     }
 
-    public void pushValueToOpstack(MovaValue value) {
+    public void pushValueToOpStack(MovaValue value) {
         processContext(value.getMovaType());
         switch (currentContext) {
             case STRING: mv.visitLdcInsn(value.getStringValue());

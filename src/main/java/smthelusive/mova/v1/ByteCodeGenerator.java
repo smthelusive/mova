@@ -22,7 +22,7 @@ public class ByteCodeGenerator {
      * @param name the name of the program
      */
     public void init(String name) {
-        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, Type.getType(Object.class).getClassName(), null);
+        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, "java/lang/Object", null);
         mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main",
              "([" + Type.getType(String.class).getDescriptor() + ")V", null, null);
         mv.visitCode();

@@ -4,3 +4,5 @@ src/main/antlr4/gen/
 .DS_Store
 src/.DS_Store
 src/main/.DS_Store
+MovaTest.class
+MovaTest2.class

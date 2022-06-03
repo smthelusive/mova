@@ -47,7 +47,7 @@ public class ByteCodeOrientedCommandVisitor extends MovaParserBaseVisitor<Void> 
 
     @Override
     public Void visitSlavaUkraini(MovaParser.SlavaUkrainiContext ctx) {
-        smartByteCodeGenerator.pushValueToOpstack(new MovaValue(MovaType.STRING, HEROYAM_SLAVA));
+        smartByteCodeGenerator.pushValueToOpStack(new MovaValue(MovaType.STRING, HEROYAM_SLAVA));
         smartByteCodeGenerator.printlnValueOnTopOfOpStack();
         return super.visitSlavaUkraini(ctx);
     }
