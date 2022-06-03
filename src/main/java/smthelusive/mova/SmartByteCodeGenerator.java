@@ -12,10 +12,14 @@ import smthelusive.mova.domain.RegistryVariable;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static smthelusive.mova.domain.MovaAction.SUFFIX;
 
 // todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
 
+    private final static String INCREMENT_DECREMENT_VALUE = "1";
     private MovaType currentContext;
     private boolean contextLocked = false;
     private final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -34,7 +38,7 @@ public class SmartByteCodeGenerator {
             if (movaType == MovaType.DECIMAL) {
                 switchContextToDecimal();
             } else if (movaType == MovaType.STRING) {
-                currentContext = MovaType.STRING;
+                switchContextToString();
             }
         } else currentContext = movaType;
     }
@@ -45,6 +49,19 @@ public class SmartByteCodeGenerator {
             mv.visitInsn(Opcodes.I2D);
             currentContext = MovaType.DECIMAL;
         }
+    }
+
+    private void switchContextToString() {
+        if (currentContext == MovaType.INTEGER) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String",
+                    "valueOf", "(" + Type.INT_TYPE.getDescriptor() + ")" +
+                            Type.getDescriptor(String.class), false);
+        } else if (currentContext == MovaType.DECIMAL) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String",
+                    "valueOf", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
+                            Type.getDescriptor(String.class), false);
+        }
+        currentContext = MovaType.STRING;
     }
 
     public void lockContext() {
@@ -115,6 +132,7 @@ public class SmartByteCodeGenerator {
         } else {
             mv.visitInsn(Opcodes.SWAP);
         }
+        // todo strings?
     }
 
     public void printVariable(String identifier) {
@@ -125,19 +143,25 @@ public class SmartByteCodeGenerator {
     }
 
     public void loadVariableToOpStack(String identifier) {
-        RegistryVariable registryVariable = byteCodeVariableRegistry.get(identifier);
-        processContext(registryVariable.getType());
-        int opcodes;
-        switch (registryVariable.getType()) {
-            case INTEGER: opcodes = Opcodes.ILOAD;
-            break;
-            case DECIMAL: opcodes = Opcodes.DLOAD;
-            break;
-            case STRING:
-            default: opcodes = Opcodes.ALOAD;
+        Optional<RegistryVariable> registryVariableOption = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
+        registryVariableOption.ifPresent(registryVariable -> {
+            processContext(registryVariable.getType());
+            int opcodes;
+            switch (registryVariable.getType()) {
+                case INTEGER: opcodes = Opcodes.ILOAD;
+                    break;
+                case DECIMAL: opcodes = Opcodes.DLOAD;
+                    break;
+                case STRING:
+                default: opcodes = Opcodes.ALOAD;
+            }
+            mv.visitVarInsn(opcodes, registryVariable.getId());
+        });
+        if (registryVariableOption.isEmpty()) {
+            // if there is no such variable then load the identifier itself in the stack:
+            mv.visitLdcInsn(identifier);
         }
-        mv.visitVarInsn(opcodes, registryVariable.getId());
-        // todo if current context is string, store the string in opstack
+
     }
 
     public void pushValueToOpStack(MovaValue value) {
@@ -151,9 +175,54 @@ public class SmartByteCodeGenerator {
         }
     }
 
-    // integer increment todo rewrite
+    /***
+     * - for integers it uses the bytecode built in integer increment
+     * - for decimal it pushes 1 onto the stack, and applies the sum operation
+     *    then it stores the value in the new variable with the same identifier
+     * @param identifier (name) of the variable to be incremented
+     */
     public void incrementVariable(String identifier) {
-        mv.visitIincInsn(byteCodeVariableRegistry.get(identifier).getId(), 1);
+        RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
+        if (variable.getType().equals(MovaType.INTEGER)) {
+            // modifies variable directly in local variables
+            mv.visitIincInsn(variable.getId(), 1);
+        } else if (variable.getType().equals(MovaType.DECIMAL)) {
+            loadVariableToOpStack(identifier);
+            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+            mv.visitInsn(Opcodes.DADD);
+            addVariableAssignment(identifier);
+        }
+    }
+
+    public void decrementVariable(String identifier) {
+        loadVariableToOpStack(identifier);
+        RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
+        if (variable.getType().equals(MovaType.INTEGER)) {
+            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+            mv.visitInsn(Opcodes.ISUB);
+            addVariableAssignment(identifier);
+        } else if (variable.getType().equals(MovaType.DECIMAL)) {
+            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+            mv.visitInsn(Opcodes.DSUB);
+            addVariableAssignment(identifier);
+        }
+    }
+
+    // todo clean the double quotes out
+    public void concatenate(boolean prefix) {
+        String stringBuilderPath = "java/lang/StringBuilder";
+        if (!prefix) swap();
+        mv.visitTypeInsn(Opcodes.NEW, stringBuilderPath);
+        mv.visitInsn(Opcodes.DUP);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, stringBuilderPath,"<init>","()V",false);
+        // call append method twice:
+        for (int i = 0; i < 2; i++) {
+            swap();
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, stringBuilderPath,"append", "(" +
+                    Type.getDescriptor(String.class) + ")" + Type.getDescriptor(StringBuilder.class),false);
+        }
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, stringBuilderPath, "toString","()" +
+                Type.getDescriptor(String.class),false);
     }
 
     public void performBytecodeOperation(MovaAction action) {
@@ -175,9 +244,12 @@ public class SmartByteCodeGenerator {
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IDIV);
                 else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DDIV);
                 break;
-            default:
+            case PREFIX: concatenate(true);
+                break;
+            case SUFFIX:
+            case WITH:
+            default: concatenate(false);
         }
-        // todo perform actions for strings
     }
 
     /***

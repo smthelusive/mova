@@ -35,14 +35,16 @@ public class ByteCodeOrientedCommandVisitor extends MovaParserBaseVisitor<Void> 
 
     @Override
     public Void visitDecrement(MovaParser.DecrementContext ctx) {
-        // todo implement
-        return super.visitDecrement(ctx);
+        String identifier = ctx.IDENTIFIER().getText();
+        smartByteCodeGenerator.decrementVariable(identifier);
+        return null;
     }
 
     @Override
     public Void visitIncrement(MovaParser.IncrementContext ctx) {
-        // todo implement
-        return super.visitIncrement(ctx);
+        String identifier = ctx.IDENTIFIER().getText();
+        smartByteCodeGenerator.incrementVariable(identifier);
+        return null;
     }
 
     @Override
