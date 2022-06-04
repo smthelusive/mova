@@ -7,6 +7,8 @@ import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 import smthelusive.mova.util.OperationsUtil;
 
+import java.util.Optional;
+
 public class CommandVisitor extends MovaParserBaseVisitor<Void> {
     private final ExpressionVisitor expressionVisitor = new ExpressionVisitor();
     private final ByteCodeGenerator bytecodeGenerator;
@@ -19,8 +21,8 @@ public class CommandVisitor extends MovaParserBaseVisitor<Void> {
     @Override
     public Void visitAssignment(MovaParser.AssignmentContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
-        MovaParser.ExpressionContext expressionContext = ctx.expression();
-        MovaValue movaValue = expressionVisitor.visitExpression(expressionContext);
+        MovaParser.AllKindsExpressionContext allKindsExpression = ctx.allKindsExpression();
+        MovaValue movaValue = expressionVisitor.visitAllKindsExpression(allKindsExpression);
         Compiler.registerVariable(identifier, movaValue);
         bytecodeGenerator.addVariableAssignment(identifier, movaValue);
         return super.visitAssignment(ctx);
@@ -28,10 +30,21 @@ public class CommandVisitor extends MovaParserBaseVisitor<Void> {
 
     @Override
     public Void visitOutput(MovaParser.OutputContext ctx) {
-        MovaParser.ExpressionContext expressionContext = ctx.expression();
-        MovaValue movaValue = expressionVisitor.visitExpression(expressionContext);
+        MovaParser.AllKindsExpressionContext allKindsExpression = ctx.allKindsExpression();
+        MovaValue movaValue = expressionVisitor.visitAllKindsExpression(allKindsExpression);
         bytecodeGenerator.addPrintlnByString(movaValue.getStringValue());
         return super.visitOutput(ctx);
+    }
+
+    @Override
+    public Void visitAllKindsExpression(MovaParser.AllKindsExpressionContext ctx) {
+        Optional<MovaParser.ExpressionContext> expressionContext = Optional.ofNullable(ctx.expression());
+        expressionContext.ifPresent(expressionVisitor::visitExpression);
+        Optional<MovaParser.IncrementContext> incrementContext = Optional.ofNullable(ctx.increment());
+        incrementContext.ifPresent(this::visitIncrement);
+        Optional<MovaParser.DecrementContext> decrementContext = Optional.ofNullable(ctx.decrement());
+        decrementContext.ifPresent(this::visitDecrement);
+        return null;
     }
 
     @Override

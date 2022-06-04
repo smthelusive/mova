@@ -180,12 +180,13 @@ public class SmartByteCodeGenerator {
      * @param identifier (name) of the variable to be incremented
      */
     public void incrementVariable(String identifier) {
+        loadVariableToOpStack(identifier);
         RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
         if (variable.getType().equals(MovaType.INTEGER)) {
-            // modifies variable directly in local variables
-            mv.visitIincInsn(variable.getId(), 1);
+            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+            mv.visitInsn(Opcodes.IADD);
+            addVariableAssignment(identifier);
         } else if (variable.getType().equals(MovaType.DECIMAL)) {
-            loadVariableToOpStack(identifier);
             pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
             mv.visitInsn(Opcodes.DADD);
             addVariableAssignment(identifier);

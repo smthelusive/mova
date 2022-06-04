@@ -23,18 +23,6 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(MovaParser.ExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MovaParser#assignment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignment(MovaParser.AssignmentContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MovaParser#output}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOutput(MovaParser.OutputContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MovaParser#decrement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -47,6 +35,24 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIncrement(MovaParser.IncrementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MovaParser#allKindsExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAllKindsExpression(MovaParser.AllKindsExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MovaParser#assignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignment(MovaParser.AssignmentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MovaParser#output}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOutput(MovaParser.OutputContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MovaParser#slavaUkraini}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -58,6 +64,12 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCommand(MovaParser.CommandContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MovaParser#block}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlock(MovaParser.BlockContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MovaParser#condition}.
 	 * @param ctx the parse tree

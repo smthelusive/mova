@@ -51,10 +51,18 @@ public class ByteCodeOrientedExpressionVisitor extends MovaParserBaseVisitor<Voi
         }
 
         MovaValue movaValue = new MovaValue();
-        if (ctx.INTEGER() != null) movaValue.setMovaType(MovaType.INTEGER);
-        else if (ctx.DECIMAL() != null) movaValue.setMovaType(MovaType.DECIMAL);
-        else if (ctx.STRING() != null) movaValue.setMovaType(MovaType.STRING);
-        movaValue.setRawValue(ctx.getText());
+        if (ctx.INTEGER() != null) {
+            movaValue.setMovaType(MovaType.INTEGER);
+            movaValue.setRawValue(ctx.getText());
+        }
+        else if (ctx.DECIMAL() != null) {
+            movaValue.setMovaType(MovaType.DECIMAL);
+            movaValue.setRawValue(ctx.getText());
+        }
+        else if (ctx.STRING() != null) {
+            movaValue.setMovaType(MovaType.STRING);
+            movaValue.setRawValue(OperationsUtil.clean(ctx.getText()));
+        }
         smartBytecodeGenerator.pushValueToOpStack(movaValue);
         return null;
     }

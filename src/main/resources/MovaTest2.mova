@@ -21,6 +21,14 @@ show s.
 show a.
 -- a.
 show a.
+a++.
+show a.
+a increment.
+show a.
+a decrement.
+show a.
+a --.
+show a.
 
 // string testing:
 

@@ -9,22 +9,24 @@ expression : expression (MULTIPLY | DIVIDE) expression
             | expression (PREFIX | SUFFIX | WITH) expression
             | LPAREN expression RPAREN
             | value;
+decrement: DECREMENT IDENTIFIER | IDENTIFIER DECREMENT;
+increment: INCREMENT IDENTIFIER | IDENTIFIER INCREMENT;
+allKindsExpression: (expression | increment | decrement);
 
-assignment: IDENTIFIER EQUALS expression;
+assignment: IDENTIFIER EQUALS allKindsExpression;
+output: SHOW allKindsExpression;
 
-output: SHOW expression;
-decrement: DECREMENT IDENTIFIER;
-increment: INCREMENT IDENTIFIER;
 slavaUkraini: SLAVAUKRAINI;
 
 command: (assignment | decrement | increment | output);
 
-condition: expression (NOT)* ((EQUALS | MORETHAN | LESSTHAN | MOREOREQUAL | LESSOREQUAL | NOTEQUAL) expression)*;
-conditional: (IF condition ((AND | OR) condition)* (THEN | COLON) command (ALSO command)*)+
-(OTHERWISE command (ALSO command)*)*;
+block: command (ALSO command)*;
+condition: allKindsExpression (NOT)* ((EQUALS | MORETHAN | LESSTHAN | MOREOREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
+conditional: (IF condition ((AND | OR) condition)* (THEN | COLON) block)+
+(OTHERWISE block)*;
 
-loop: (((DO | REPEAT) ((expression TIMES) | (UNTIL condition)) COLON command (ALSO command)*) |
-(command expression TIMES));
+loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON block) |
+((DO | REPEAT) block allKindsExpression TIMES));
 
 validStructure: ((command | conditional | loop) (ALSO validStructure)* DOT)
                 | slavaUkraini;

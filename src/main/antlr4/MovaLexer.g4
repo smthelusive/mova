@@ -28,8 +28,8 @@ OR                 : 'or' | '|' | '||' ;
 AND                : 'and' | '&' | '&&' ;
 NOT                : 'not' | '!' ;
 
-INCREMENT          : 'increment' | '++' ;
-DECREMENT          : 'decrement' | '--' ;
+INCREMENT          : 'increment' | 'incremented' | '++' ;
+DECREMENT          : 'decrement' | 'decremented' | '--' ;
 
 COMMA              : ',' ;
 ALSO               : ';' | 'also' ;

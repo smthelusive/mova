@@ -1,0 +1,11 @@
+// test increment and decrement enhancements:
+
+test is 118.
+show test --.
+show decrement test.
+test2 is test++.
+show test2 increment.
+
+dec is 1,34.
+show dec++.
+show dec incremented.
