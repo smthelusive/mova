@@ -6,54 +6,31 @@ import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
-import java.util.Optional;
-
-public class ByteCodeOrientedCommandVisitor extends MovaParserBaseVisitor<Void> {
-    private final ByteCodeOrientedExpressionVisitor expressionVisitor;
+public class CommandVisitor extends MovaParserBaseVisitor<Void> {
+    private final ExpressionVisitor expressionVisitor;
     private final SmartByteCodeGenerator smartByteCodeGenerator;
     private static final String HEROYAM_SLAVA = "Героям Слава!";
 
-    public ByteCodeOrientedCommandVisitor(SmartByteCodeGenerator smartByteCodeGenerator) {
+    public CommandVisitor(SmartByteCodeGenerator smartByteCodeGenerator, ExpressionVisitor expressionVisitor) {
         this.smartByteCodeGenerator = smartByteCodeGenerator;
-        expressionVisitor = new ByteCodeOrientedExpressionVisitor(smartByteCodeGenerator);
+        this.expressionVisitor = expressionVisitor;
     }
 
     @Override
     public Void visitAssignment(MovaParser.AssignmentContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
         MovaParser.AllKindsExpressionContext allKindsExpression = ctx.allKindsExpression();
-        visitAllKindsExpression(allKindsExpression);
+        expressionVisitor.visitAllKindsExpression(allKindsExpression);
         smartByteCodeGenerator.addVariableAssignment(identifier);
-        return super.visitAssignment(ctx);
+        return null;
     }
 
     @Override
     public Void visitOutput(MovaParser.OutputContext ctx) {
         MovaParser.AllKindsExpressionContext allKindsExpression = ctx.allKindsExpression();
-        visitAllKindsExpression(allKindsExpression);
+        expressionVisitor.visitAllKindsExpression(allKindsExpression);
         smartByteCodeGenerator.printlnValueOnTopOfOpStack();
         return null;
-    }
-
-    @Override
-    public Void visitAllKindsExpression(MovaParser.AllKindsExpressionContext ctx) {
-        Optional.ofNullable(ctx.expression()).ifPresent(expressionVisitor::visitExpression);
-        Optional.ofNullable(ctx.increment()).ifPresent(this::visitIncrementForReuse);
-        Optional.ofNullable(ctx.decrement()).ifPresent(this::visitDecrementForReuse);
-        return null;
-    }
-
-    // todo refactor
-    public void visitDecrementForReuse(MovaParser.DecrementContext ctx) {
-        String identifier = ctx.IDENTIFIER().getText();
-        smartByteCodeGenerator.decrementVariable(identifier);
-        smartByteCodeGenerator.loadVariableToOpStack(identifier);
-    }
-
-    public void visitIncrementForReuse(MovaParser.IncrementContext ctx) {
-        String identifier = ctx.IDENTIFIER().getText();
-        smartByteCodeGenerator.incrementVariable(identifier);
-        smartByteCodeGenerator.loadVariableToOpStack(identifier);
     }
 
     @Override
@@ -74,6 +51,6 @@ public class ByteCodeOrientedCommandVisitor extends MovaParserBaseVisitor<Void> 
     public Void visitSlavaUkraini(MovaParser.SlavaUkrainiContext ctx) {
         smartByteCodeGenerator.pushValueToOpStack(new MovaValue(MovaType.STRING, HEROYAM_SLAVA));
         smartByteCodeGenerator.printlnValueOnTopOfOpStack();
-        return super.visitSlavaUkraini(ctx);
+        return null;
     }
 }

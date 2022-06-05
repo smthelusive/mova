@@ -35,9 +35,9 @@ COMMA              : ',' ;
 ALSO               : ';' | 'also' ;
 DOT                : '.' ;
 
-MORETHAN           : '>' | 'more than' | 'more' ;
+GREATERTHAN        : '>' | 'greater than' | 'greater' | 'more than' | 'more' ;
 LESSTHAN           : '<' | 'less than' | 'less' ;
-MOREOREQUAL        : '>=' | 'more or equal to' | 'more or equal' ;
+GREATEROREQUAL     : '>=' | 'more or equal to' | 'more or equal' | 'greater or equal to' | 'greater or equal' ;
 LESSOREQUAL        : '<=' | 'less or equal to' | 'less or equal' ;
 NOTEQUAL           : '!=' | 'not equal to' | 'not equal' ;
 

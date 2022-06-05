@@ -1,13 +1,12 @@
 package smthelusive.mova;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import org.objectweb.asm.*;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.domain.RegistryVariable;
+import smthelusive.mova.gen.MovaParser;
 
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -24,6 +23,11 @@ public class SmartByteCodeGenerator {
     private int variableIndex = 1;
     private MethodVisitor mv;
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
+
+    private int labelNumber;
+    private int endLabelNumber;
+    private final Map<Integer, Label> labelRegistry = new HashMap<>();
+    private final Map<Integer, Label> endLabelRegistry = new HashMap<>();
 
     /***
      * the strongest context is String, then goes Decimal, the last is Integer
@@ -68,13 +72,15 @@ public class SmartByteCodeGenerator {
     }
 
     private String getContextDescriptor() {
-        switch (currentContext) {
-            case INTEGER: return Type.INT_TYPE.getDescriptor();
-            case DECIMAL: return Type.DOUBLE_TYPE.getDescriptor();
-            case STRING:
-            default:
-                return Type.getType(String.class).getDescriptor();
-        }
+        return Optional.ofNullable(currentContext).map(context -> {
+            switch (context) {
+                case INTEGER: return Type.INT_TYPE.getDescriptor();
+                case DECIMAL: return Type.DOUBLE_TYPE.getDescriptor();
+                case STRING:
+                default:
+                    return Type.getType(String.class).getDescriptor();
+            }
+        }).orElse(Type.getType(String.class).getDescriptor());
     }
 
     /**
@@ -157,6 +163,7 @@ public class SmartByteCodeGenerator {
         });
         if (registryVariableOption.isEmpty()) {
             // if there is no such variable then load the identifier itself in the stack:
+            processContext(MovaType.STRING);
             mv.visitLdcInsn(identifier);
         }
 
@@ -182,29 +189,54 @@ public class SmartByteCodeGenerator {
     public void incrementVariable(String identifier) {
         loadVariableToOpStack(identifier);
         RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
-        if (variable.getType().equals(MovaType.INTEGER)) {
+//        if (variable.getType().equals(MovaType.INTEGER)) {
+//            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+//            mv.visitInsn(Opcodes.IADD);
+//            addVariableAssignment(identifier);
+//        } else if (variable.getType().equals(MovaType.DECIMAL)) {
+//            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+//            mv.visitInsn(Opcodes.DADD);
+//            addVariableAssignment(identifier);
+//        }
+
+        incrementLastStackValue(variable.getType());
+        addVariableAssignment(identifier);
+    }
+
+    public void incrementLastStackValue(MovaType type) {
+        if (type.equals(MovaType.INTEGER)) {
             pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
             mv.visitInsn(Opcodes.IADD);
-            addVariableAssignment(identifier);
-        } else if (variable.getType().equals(MovaType.DECIMAL)) {
+        } else if (type.equals(MovaType.DECIMAL)) {
             pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
             mv.visitInsn(Opcodes.DADD);
-            addVariableAssignment(identifier);
+        }
+    }
+
+    public void decrementLastStackValue(MovaType type) {
+        if (type.equals(MovaType.INTEGER)) {
+            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+            mv.visitInsn(Opcodes.ISUB);
+        } else if (type.equals(MovaType.DECIMAL)) {
+            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+            mv.visitInsn(Opcodes.DSUB);
         }
     }
 
     public void decrementVariable(String identifier) {
         loadVariableToOpStack(identifier);
         RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
-        if (variable.getType().equals(MovaType.INTEGER)) {
-            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
-            mv.visitInsn(Opcodes.ISUB);
-            addVariableAssignment(identifier);
-        } else if (variable.getType().equals(MovaType.DECIMAL)) {
-            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
-            mv.visitInsn(Opcodes.DSUB);
-            addVariableAssignment(identifier);
-        }
+//        if (variable.getType().equals(MovaType.INTEGER)) {
+//            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+//            mv.visitInsn(Opcodes.ISUB);
+//            addVariableAssignment(identifier);
+//        } else if (variable.getType().equals(MovaType.DECIMAL)) {
+//            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+//            mv.visitInsn(Opcodes.DSUB);
+//            addVariableAssignment(identifier);
+//        }
+        decrementLastStackValue(variable.getType());
+        addVariableAssignment(identifier);
     }
 
     // todo clean the double quotes out
@@ -249,6 +281,140 @@ public class SmartByteCodeGenerator {
             case WITH:
             default: concatenate(false);
         }
+    }
+
+    private void negateLastValueOnStack() {
+        pushValueToOpStack(new MovaValue(currentContext, "-1"));
+        performBytecodeOperation(MovaAction.MULTIPLY);
+    }
+
+    public void calculateConditionalExpression(MovaParser.ConditionContext ctx) {
+        currentContext = MovaType.INTEGER;
+        TerminalNode comparison = (TerminalNode)ctx.getChild(1);
+        String comparisonKeyword = MovaParser.VOCABULARY.getSymbolicName(comparison.getSymbol().getType());
+        boolean negated = ctx.NOT(0) != null;
+        switch (comparisonKeyword) {
+            case "LESSTHAN":
+                calculateLessThan();
+                break;
+            case "LESSOREQUAL":
+                calculateLessOrEqual();
+                break;
+            case "GREATERTHAN":
+                calculateGreaterThan();
+                break;
+            case "GREATEROREQUAL":
+                calculateGreaterOrEqual();
+                break;
+            case "NOTEQUAL":
+                calculateEquals();
+                negateLastValueOnStack();
+                break;
+            case "EQUALS":
+            default:
+                calculateEquals();
+        }
+        if (negated) negateLastValueOnStack();
+    }
+
+    public void convertStackTopToBooleanValue() {
+        // trick to convert negatives to 0 and positive values don't matter as long as it's positive
+        mv.visitInsn(Opcodes.DUP);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
+                "abs", "(" + Type.INT_TYPE.getDescriptor() + ")" +
+                        Type.INT_TYPE.getDescriptor(), false);
+        performBytecodeOperation(MovaAction.DIVIDE);
+    }
+
+    private void calculateEquals() {
+        // a == b: a - b + 1
+        performBytecodeOperation(MovaAction.MINUS);
+        incrementLastStackValue(currentContext);
+    }
+
+    private void calculateLessThan() {
+        // a < b: (a - b) * (-1)
+        performBytecodeOperation(MovaAction.MINUS);
+        negateLastValueOnStack();
+    }
+
+    private void calculateLessOrEqual() {
+        // a <= b: ((a - b) - 1) * (-1)
+        performBytecodeOperation(MovaAction.MINUS);
+        decrementLastStackValue(currentContext);
+        negateLastValueOnStack();
+    }
+
+    private void calculateGreaterThan() {
+        // a > b: a - b
+        performBytecodeOperation(MovaAction.MINUS);
+    }
+
+    private void calculateGreaterOrEqual() {
+        // a >= b: (a - (b - 1))
+        decrementLastStackValue(currentContext);
+        performBytecodeOperation(MovaAction.MINUS);
+    }
+
+    public void performConditionalJump(String comparisonKeyword, boolean negated) {
+        mv.visitJumpInsn(getComparisonOpcodes(comparisonKeyword, negated),
+                labelRegistry.get(labelNumber));
+    }
+
+    private int getComparisonOpcodes(String comparisonKeyword, boolean negated) {
+        int opcodes;
+        switch (comparisonKeyword) {
+            case "LESSTHAN":
+                opcodes = negated ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
+                break;
+            case "LESSOREQUAL":
+                opcodes = negated ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
+                break;
+            case "GREATERTHAN":
+                opcodes = negated ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
+                break;
+            case "GREATEROREQUAL":
+                opcodes = negated ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
+                break;
+            case "NOTEQUAL":
+                opcodes = negated ? Opcodes.IF_ACMPEQ : Opcodes.IF_ICMPNE;
+                break;
+            case "EQUALS":
+            default:
+                opcodes = negated ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
+        }
+        return opcodes;
+    }
+
+    // if top of the stack is greater than 0, go to current label
+    public void jumpIFGT() {
+        mv.visitJumpInsn(Opcodes.IFGT, labelRegistry.get(labelNumber));
+    }
+
+    public void createNewLabel() {
+        labelNumber++;
+        Label label = new Label();
+        labelRegistry.put(labelNumber, label);
+    }
+
+    public void writeByteCodeLabel() {
+        mv.visitLabel(labelRegistry.get(labelNumber));
+        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+    }
+
+    public void writeByteCodeEndLabel() {
+        mv.visitLabel(endLabelRegistry.get(endLabelNumber));
+        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+    }
+
+    public void createEndLabel() {
+        endLabelNumber++;
+        Label endLabel = new Label();
+        endLabelRegistry.put(endLabelNumber, endLabel);
+    }
+
+    public void gotoEnd() {
+        mv.visitJumpInsn(Opcodes.GOTO, endLabelRegistry.get(endLabelNumber));
     }
 
     /***

@@ -21,8 +21,12 @@ slavaUkraini: SLAVAUKRAINI;
 command: (assignment | decrement | increment | output);
 
 block: command (ALSO command)*;
-condition: allKindsExpression (NOT)* ((EQUALS | MORETHAN | LESSTHAN | MOREOREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
-conditional: (IF condition ((AND | OR) condition)* (THEN | COLON) block)+
+
+condition : condition (AND | OR) condition
+            | LPAREN condition RPAREN
+            | allKindsExpression ((NOT)? (EQUALS | GREATERTHAN | LESSTHAN | GREATEROREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
+
+conditional: (IF condition (THEN | COLON) block)+
 (OTHERWISE block)*;
 
 loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON block) |

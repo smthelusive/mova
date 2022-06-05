@@ -1,0 +1,13 @@
+if 2 > 1: show yes.
+if 2 < 1: show no.
+if 2 < 5 and 2 > 3: show nonono.
+if 2 < 5 or 2 > 3 and 2 < 3: show yesyesyes.
+if 2 = 2: show yes.
+if (5>2 and (5<7 or 2>10)) or (2>5 and 1>5): show "it works!" also show "this also works".
+
+// todo test negations
+// todo implement otherwise
+// todo test nested conditions
+// todo remove colon/then from mandatory syntax!
+// todo test conditions with variables
+// todo introduce other contexts to conditionals

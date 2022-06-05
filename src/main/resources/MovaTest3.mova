@@ -1,6 +1,6 @@
 // test increment and decrement enhancements:
 
-test is 118.
+test is 118 + 5.
 show test --.
 show decrement test.
 test2 is test++.

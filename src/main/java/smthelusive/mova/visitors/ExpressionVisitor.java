@@ -9,11 +9,13 @@ import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 import smthelusive.mova.util.OperationsUtil;
 
-public class ByteCodeOrientedExpressionVisitor extends MovaParserBaseVisitor<Void> {
+import java.util.Optional;
+
+public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
 
     private final SmartByteCodeGenerator smartBytecodeGenerator;
 
-    public ByteCodeOrientedExpressionVisitor(SmartByteCodeGenerator smartByteCodeGenerator) {
+    public ExpressionVisitor(SmartByteCodeGenerator smartByteCodeGenerator) {
         this.smartBytecodeGenerator = smartByteCodeGenerator;
     }
 
@@ -65,5 +67,25 @@ public class ByteCodeOrientedExpressionVisitor extends MovaParserBaseVisitor<Voi
         }
         smartBytecodeGenerator.pushValueToOpStack(movaValue);
         return null;
+    }
+
+    @Override
+    public Void visitAllKindsExpression(MovaParser.AllKindsExpressionContext ctx) {
+        Optional.ofNullable(ctx.expression()).ifPresent(this::visitExpression);
+        Optional.ofNullable(ctx.increment()).ifPresent(this::visitIncrementForReuse);
+        Optional.ofNullable(ctx.decrement()).ifPresent(this::visitDecrementForReuse);
+        return null;
+    }
+
+    public void visitDecrementForReuse(MovaParser.DecrementContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        smartBytecodeGenerator.decrementVariable(identifier);
+        smartBytecodeGenerator.loadVariableToOpStack(identifier);
+    }
+
+    public void visitIncrementForReuse(MovaParser.IncrementContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        smartBytecodeGenerator.incrementVariable(identifier);
+        smartBytecodeGenerator.loadVariableToOpStack(identifier);
     }
 }

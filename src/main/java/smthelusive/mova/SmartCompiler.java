@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import smthelusive.mova.gen.MovaLexer;
 import smthelusive.mova.gen.MovaParser;
-import smthelusive.mova.visitors.ByteCodeOrientedMovaProgramVisitor;
+import smthelusive.mova.visitors.MovaProgramVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class SmartCompiler {
                 String[] filename = inputFile.split("/");
                 String programName = filename[filename.length - 1].replace(".mova", "");
                 smartByteCodeGenerator.init(programName);
-                ByteCodeOrientedMovaProgramVisitor movaProgramVisitor = new ByteCodeOrientedMovaProgramVisitor(smartByteCodeGenerator);
+                MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(smartByteCodeGenerator);
                 movaProgramVisitor.visit(parser.validProgram());
                 byte[] bytes = smartByteCodeGenerator.cleanCloseProgram();
                 FileOutputStream stream = new FileOutputStream(programName + ".class");
