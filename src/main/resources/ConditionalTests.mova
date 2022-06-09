@@ -1,13 +1,20 @@
-if 2 > 1: show yes.
-if 2 < 1: show no.
-if 2 < 5 and 2 > 3: show nonono.
-if 2 < 5 or 2 > 3 and 2 < 3: show yesyesyes.
-if 2 = 2: show yes.
+if 2 > 1: show correct.
+if 2 < 1: show incorrect.
+if 2 < 5 and 2 > 3: show incorrect.
+if 2 < 5 or 2 > 3 and 2 < 3: show correct.
+if not 2 not = 2 show correct.
+if not 2 = 2: show correct.
 if (5>2 and (5<7 or 2>10)) or (2>5 and 1>5): show "it works!" also show "this also works".
+if (5>2 and (5 not > 7 or 2>10)) or (2>5 and 1>5): show "it works!" also show "this also works".
+if 1 if 1 show "correct".
+if 1 show correct also if 1 show "correct".
+if 1 if -1 show "incorrect".
 
-// todo test negations
 // todo implement otherwise
-// todo test nested conditions
-// todo remove colon/then from mandatory syntax!
-// todo test conditions with variables
+// todo test nested conditions ~
 // todo introduce other contexts to conditionals
+// todo fix division by zero
+
+//a is 5.
+//if (a>2 and (a not > 7 or 2>10)) or (2>a and 1>a)
+//if a not = 4 show test.

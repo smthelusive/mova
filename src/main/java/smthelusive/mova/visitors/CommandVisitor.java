@@ -11,9 +11,9 @@ public class CommandVisitor extends MovaParserBaseVisitor<Void> {
     private final SmartByteCodeGenerator smartByteCodeGenerator;
     private static final String HEROYAM_SLAVA = "Героям Слава!";
 
-    public CommandVisitor(SmartByteCodeGenerator smartByteCodeGenerator, ExpressionVisitor expressionVisitor) {
-        this.smartByteCodeGenerator = smartByteCodeGenerator;
-        this.expressionVisitor = expressionVisitor;
+    public CommandVisitor(MovaProgramVisitor movaProgramVisitor) {
+        smartByteCodeGenerator = movaProgramVisitor.getSmartByteCodeGenerator();
+        expressionVisitor = movaProgramVisitor.getExpressionVisitor();
     }
 
     @Override

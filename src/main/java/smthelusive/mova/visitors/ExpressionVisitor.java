@@ -15,8 +15,8 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
 
     private final SmartByteCodeGenerator smartBytecodeGenerator;
 
-    public ExpressionVisitor(SmartByteCodeGenerator smartByteCodeGenerator) {
-        this.smartBytecodeGenerator = smartByteCodeGenerator;
+    public ExpressionVisitor(MovaProgramVisitor movaProgramVisitor) {
+        this.smartBytecodeGenerator = movaProgramVisitor.getSmartByteCodeGenerator();
     }
 
     @Override

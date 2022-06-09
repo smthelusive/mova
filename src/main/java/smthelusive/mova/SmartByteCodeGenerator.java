@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Stack;
 
 // todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
@@ -25,9 +26,9 @@ public class SmartByteCodeGenerator {
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
 
     private int labelNumber;
-    private int endLabelNumber;
+//    private int endLabelNumber;
     private final Map<Integer, Label> labelRegistry = new HashMap<>();
-    private final Map<Integer, Label> endLabelRegistry = new HashMap<>();
+    private final Stack<Label> endLabelRegistry = new Stack<>();
 
     /***
      * the strongest context is String, then goes Decimal, the last is Integer
@@ -239,7 +240,6 @@ public class SmartByteCodeGenerator {
         addVariableAssignment(identifier);
     }
 
-    // todo clean the double quotes out
     public void concatenate(boolean prefix) {
         String stringBuilderPath = "java/lang/StringBuilder";
         if (!prefix) swap();
@@ -290,9 +290,11 @@ public class SmartByteCodeGenerator {
 
     public void calculateConditionalExpression(MovaParser.ConditionContext ctx) {
         currentContext = MovaType.INTEGER;
-        TerminalNode comparison = (TerminalNode)ctx.getChild(1);
+        int amountOfNegations = ctx.NOT().size();
+        boolean negated = (amountOfNegations > 0) && (amountOfNegations % 2 != 0);
+        int comparingSymbolIndex = ctx.NOT().size() + 1;
+        TerminalNode comparison = (TerminalNode)ctx.getChild(comparingSymbolIndex);
         String comparisonKeyword = MovaParser.VOCABULARY.getSymbolicName(comparison.getSymbol().getType());
-        boolean negated = ctx.NOT(0) != null;
         switch (comparisonKeyword) {
             case "LESSTHAN":
                 calculateLessThan();
@@ -361,6 +363,7 @@ public class SmartByteCodeGenerator {
                 labelRegistry.get(labelNumber));
     }
 
+    @Deprecated
     private int getComparisonOpcodes(String comparisonKeyword, boolean negated) {
         int opcodes;
         switch (comparisonKeyword) {
@@ -403,18 +406,16 @@ public class SmartByteCodeGenerator {
     }
 
     public void writeByteCodeEndLabel() {
-        mv.visitLabel(endLabelRegistry.get(endLabelNumber));
+        mv.visitLabel(endLabelRegistry.pop());
         mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
     }
 
     public void createEndLabel() {
-        endLabelNumber++;
-        Label endLabel = new Label();
-        endLabelRegistry.put(endLabelNumber, endLabel);
+        endLabelRegistry.add(new Label());
     }
 
     public void gotoEnd() {
-        mv.visitJumpInsn(Opcodes.GOTO, endLabelRegistry.get(endLabelNumber));
+        mv.visitJumpInsn(Opcodes.GOTO, endLabelRegistry.lastElement());
     }
 
     /***

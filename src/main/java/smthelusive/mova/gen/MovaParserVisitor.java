@@ -1,5 +1,5 @@
+// Generated from /Users/nbziubenko/Documents/work/pd_repos/mova/src/main/antlr4/MovaParser.g4 by ANTLR 4.10.1
 package smthelusive.mova.gen;
-
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -64,12 +64,6 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCommand(MovaParser.CommandContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MovaParser#block}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBlock(MovaParser.BlockContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MovaParser#condition}.
 	 * @param ctx the parse tree

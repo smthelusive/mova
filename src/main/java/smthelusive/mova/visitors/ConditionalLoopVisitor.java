@@ -18,11 +18,11 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
         this.expressionVisitor = expressionVisitor;
     }
 
-    @Override
-    public Void visitBlock(MovaParser.BlockContext ctx) {
-        ctx.command().forEach(commandVisitor::visitCommand);
-        return null;
-    }
+//    @Override
+//    public Void visitBlock(MovaParser.BlockContext ctx) {
+//        ctx.command().forEach(commandVisitor::visitCommand);
+//        return null;
+//    }
 
     @Override
     public Void visitCondition(MovaParser.ConditionContext ctx) {
@@ -62,7 +62,7 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
         visitCondition(ctx.condition(0));
         smartByteCodeGenerator.gotoEnd();
         smartByteCodeGenerator.writeByteCodeLabel();
-        visitBlock(ctx.block(0));
+//        visitBlock(ctx.block(0));
         smartByteCodeGenerator.writeByteCodeEndLabel();
         return null;
     }

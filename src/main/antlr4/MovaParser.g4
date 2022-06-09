@@ -20,19 +20,16 @@ slavaUkraini: SLAVAUKRAINI;
 
 command: (assignment | decrement | increment | output);
 
-block: command (ALSO command)*;
-
 condition : condition (AND | OR) condition
             | LPAREN condition RPAREN
-            | allKindsExpression ((NOT)? (EQUALS | GREATERTHAN | LESSTHAN | GREATEROREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
+            | (NOT)? allKindsExpression ((NOT)? (EQUALS | GREATERTHAN | LESSTHAN | GREATEROREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
 
-conditional: (IF condition (THEN | COLON) block)+
-(OTHERWISE block)*;
+conditional: (IF condition (THEN | COLON)? validStructure)+
+(OTHERWISE validStructure)*;
 
-loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON block) |
-((DO | REPEAT) block allKindsExpression TIMES));
+loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON validStructure) |
+((DO | REPEAT) validStructure allKindsExpression TIMES));
 
-validStructure: ((command | conditional | loop) (ALSO validStructure)* DOT)
-                | slavaUkraini;
+validStructure: (command | conditional | loop | slavaUkraini) (ALSO validStructure)* ;
 
-validProgram: validStructure* EOF;
+validProgram: (validStructure DOT)* EOF;
