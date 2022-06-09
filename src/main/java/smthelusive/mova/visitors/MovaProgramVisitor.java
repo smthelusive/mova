@@ -9,6 +9,7 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
     private final ExpressionVisitor expressionVisitor;
     private final CommandVisitor commandVisitor;
     private final ExpressionBasedConditionsVisitor conditionalLoopVisitor;
+//    private final ConditionalLoopVisitor conditionalLoopVisitor;
     private final SmartByteCodeGenerator smartByteCodeGenerator;
 
     public ExpressionVisitor getExpressionVisitor() {
@@ -38,7 +39,6 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
     public Void visitValidStructure(MovaParser.ValidStructureContext ctx) {
         if (ctx.conditional() != null) conditionalLoopVisitor.visitConditional(ctx.conditional());
         if (ctx.command() != null) commandVisitor.visitCommand(ctx.command());
-//        if (ctx.slavaUkraini() != null) commandVisitor.visitSlavaUkraini(ctx.slavaUkraini());
         ctx.validStructure().forEach(this::visitValidStructure);
         return null;
     }

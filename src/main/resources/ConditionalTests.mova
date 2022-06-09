@@ -11,10 +11,11 @@ if 1 show correct also if 1 show "correct".
 if 1 if -1 show "incorrect".
 
 // todo implement otherwise
-// todo test nested conditions ~
 // todo introduce other contexts to conditionals
 // todo fix division by zero
+// todo test the first approach for conditions
 
+// todo this doesn't work:
 //a is 5.
 //if (a>2 and (a not > 7 or 2>10)) or (2>a and 1>a)
 //if a not = 4 show test.

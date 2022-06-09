@@ -24,8 +24,8 @@ condition : condition (AND | OR) condition
             | LPAREN condition RPAREN
             | (NOT)? allKindsExpression ((NOT)? (EQUALS | GREATERTHAN | LESSTHAN | GREATEROREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
 
-conditional: (IF condition (THEN | COLON)? validStructure)+
-(OTHERWISE validStructure)*;
+conditional: IF condition (THEN | COLON)? validStructure
+(OTHERWISE validStructure)?;
 
 loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON validStructure) |
 ((DO | REPEAT) validStructure allKindsExpression TIMES));

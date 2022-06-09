@@ -9,10 +9,7 @@ import smthelusive.mova.domain.RegistryVariable;
 import smthelusive.mova.gen.MovaParser;
 
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
 
 // todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
@@ -25,9 +22,7 @@ public class SmartByteCodeGenerator {
     private MethodVisitor mv;
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
 
-    private int labelNumber;
-//    private int endLabelNumber;
-    private final Map<Integer, Label> labelRegistry = new HashMap<>();
+    private final Stack<Label> labelRegistry = new Stack<>();
     private final Stack<Label> endLabelRegistry = new Stack<>();
 
     /***
@@ -190,16 +185,6 @@ public class SmartByteCodeGenerator {
     public void incrementVariable(String identifier) {
         loadVariableToOpStack(identifier);
         RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
-//        if (variable.getType().equals(MovaType.INTEGER)) {
-//            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
-//            mv.visitInsn(Opcodes.IADD);
-//            addVariableAssignment(identifier);
-//        } else if (variable.getType().equals(MovaType.DECIMAL)) {
-//            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
-//            mv.visitInsn(Opcodes.DADD);
-//            addVariableAssignment(identifier);
-//        }
-
         incrementLastStackValue(variable.getType());
         addVariableAssignment(identifier);
     }
@@ -227,15 +212,6 @@ public class SmartByteCodeGenerator {
     public void decrementVariable(String identifier) {
         loadVariableToOpStack(identifier);
         RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
-//        if (variable.getType().equals(MovaType.INTEGER)) {
-//            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
-//            mv.visitInsn(Opcodes.ISUB);
-//            addVariableAssignment(identifier);
-//        } else if (variable.getType().equals(MovaType.DECIMAL)) {
-//            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
-//            mv.visitInsn(Opcodes.DSUB);
-//            addVariableAssignment(identifier);
-//        }
         decrementLastStackValue(variable.getType());
         addVariableAssignment(identifier);
     }
@@ -360,10 +336,9 @@ public class SmartByteCodeGenerator {
 
     public void performConditionalJump(String comparisonKeyword, boolean negated) {
         mv.visitJumpInsn(getComparisonOpcodes(comparisonKeyword, negated),
-                labelRegistry.get(labelNumber));
+                labelRegistry.lastElement());
     }
 
-    @Deprecated
     private int getComparisonOpcodes(String comparisonKeyword, boolean negated) {
         int opcodes;
         switch (comparisonKeyword) {
@@ -391,17 +366,15 @@ public class SmartByteCodeGenerator {
 
     // if top of the stack is greater than 0, go to current label
     public void jumpIFGT() {
-        mv.visitJumpInsn(Opcodes.IFGT, labelRegistry.get(labelNumber));
+        mv.visitJumpInsn(Opcodes.IFGT, labelRegistry.lastElement());
     }
 
     public void createNewLabel() {
-        labelNumber++;
-        Label label = new Label();
-        labelRegistry.put(labelNumber, label);
+        labelRegistry.add(new Label());
     }
 
     public void writeByteCodeLabel() {
-        mv.visitLabel(labelRegistry.get(labelNumber));
+        mv.visitLabel(labelRegistry.lastElement());
         mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
     }
 
