@@ -8,8 +8,7 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
 
     private final ExpressionVisitor expressionVisitor;
     private final CommandVisitor commandVisitor;
-    private final ExpressionBasedConditionsVisitor conditionalLoopVisitor;
-//    private final ConditionalLoopVisitor conditionalLoopVisitor;
+    private final ConditionalLoopVisitor conditionalLoopVisitor;
     private final SmartByteCodeGenerator smartByteCodeGenerator;
 
     public ExpressionVisitor getExpressionVisitor() {
@@ -20,7 +19,7 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
         return commandVisitor;
     }
 
-    public ExpressionBasedConditionsVisitor getConditionalLoopVisitor() {
+    public ConditionalLoopVisitor getConditionalLoopVisitor() {
         return conditionalLoopVisitor;
     }
 
@@ -32,7 +31,7 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
         this.smartByteCodeGenerator = smartByteCodeGenerator;
         expressionVisitor = new ExpressionVisitor(this);
         commandVisitor = new CommandVisitor(this);
-        conditionalLoopVisitor = new ExpressionBasedConditionsVisitor(this);
+        conditionalLoopVisitor = new ConditionalLoopVisitor(this);
     }
 
     @Override

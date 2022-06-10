@@ -1,0 +1,10 @@
+a is 5.
+if a > 3 if a > 4 if a < 2 show a.
+
+// todo implement otherwise
+// todo introduce other contexts to conditionals
+
+a is 5.
+if (a>2 and (a < 7 or 2>10)) or (2>a and 1>a)
+if a not = 4 show test.
+

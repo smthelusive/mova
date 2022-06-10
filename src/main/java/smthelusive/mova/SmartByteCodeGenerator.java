@@ -1,6 +1,5 @@
 package smthelusive.mova;
 
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.objectweb.asm.*;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
@@ -10,20 +9,19 @@ import smthelusive.mova.gen.MovaParser;
 
 import java.io.PrintStream;
 import java.util.*;
+import java.util.function.Function;
 
 // todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
 
-    private final static String INCREMENT_DECREMENT_VALUE = "1";
+    private final static String ONE = "1";
+    private final static String ZERO = "0";
     private MovaType currentContext;
     private boolean contextLocked = false;
-    private final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    private final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
     private int variableIndex = 1;
     private MethodVisitor mv;
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
-
-    private final Stack<Label> labelRegistry = new Stack<>();
-    private final Stack<Label> endLabelRegistry = new Stack<>();
 
     /***
      * the strongest context is String, then goes Decimal, the last is Integer
@@ -135,13 +133,6 @@ public class SmartByteCodeGenerator {
         }
     }
 
-    public void printVariable(String identifier) {
-        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
-        loadVariableToOpStack(identifier);
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
-                String.format("(%s)V", getContextDescriptor()), false);
-    }
-
     public void loadVariableToOpStack(String identifier) {
         Optional<RegistryVariable> registryVariableOption = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
         registryVariableOption.ifPresent(registryVariable -> {
@@ -162,7 +153,6 @@ public class SmartByteCodeGenerator {
             processContext(MovaType.STRING);
             mv.visitLdcInsn(identifier);
         }
-
     }
 
     public void pushValueToOpStack(MovaValue value) {
@@ -191,20 +181,20 @@ public class SmartByteCodeGenerator {
 
     public void incrementLastStackValue(MovaType type) {
         if (type.equals(MovaType.INTEGER)) {
-            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+            pushValueToOpStack(new MovaValue(MovaType.INTEGER, ONE));
             mv.visitInsn(Opcodes.IADD);
         } else if (type.equals(MovaType.DECIMAL)) {
-            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, ONE));
             mv.visitInsn(Opcodes.DADD);
         }
     }
 
     public void decrementLastStackValue(MovaType type) {
         if (type.equals(MovaType.INTEGER)) {
-            pushValueToOpStack(new MovaValue(MovaType.INTEGER, INCREMENT_DECREMENT_VALUE));
+            pushValueToOpStack(new MovaValue(MovaType.INTEGER, ONE));
             mv.visitInsn(Opcodes.ISUB);
         } else if (type.equals(MovaType.DECIMAL)) {
-            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, INCREMENT_DECREMENT_VALUE));
+            pushValueToOpStack(new MovaValue(MovaType.DECIMAL, ONE));
             mv.visitInsn(Opcodes.DSUB);
         }
     }
@@ -259,136 +249,64 @@ public class SmartByteCodeGenerator {
         }
     }
 
-    private void negateLastValueOnStack() {
-        pushValueToOpStack(new MovaValue(currentContext, "-1"));
-        performBytecodeOperation(MovaAction.MULTIPLY);
-    }
-
-    public void calculateConditionalExpression(MovaParser.ConditionContext ctx) {
-        currentContext = MovaType.INTEGER;
-        int amountOfNegations = ctx.NOT().size();
-        boolean negated = (amountOfNegations > 0) && (amountOfNegations % 2 != 0);
-        int comparingSymbolIndex = ctx.NOT().size() + 1;
-        TerminalNode comparison = (TerminalNode)ctx.getChild(comparingSymbolIndex);
-        String comparisonKeyword = MovaParser.VOCABULARY.getSymbolicName(comparison.getSymbol().getType());
+    public void compareTwoThings(String comparisonKeyword, boolean negated) {
+        performBytecodeOperation(MovaAction.MINUS);
+        int opcodeCondition;
         switch (comparisonKeyword) {
             case "LESSTHAN":
-                calculateLessThan();
+                opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;
                 break;
             case "LESSOREQUAL":
-                calculateLessOrEqual();
+                opcodeCondition = negated ? Opcodes.IFGT : Opcodes.IFLE;
                 break;
             case "GREATERTHAN":
-                calculateGreaterThan();
+                opcodeCondition = negated ? Opcodes.IFLE : Opcodes.IFGT;
                 break;
             case "GREATEROREQUAL":
-                calculateGreaterOrEqual();
+                opcodeCondition = negated ? Opcodes.IFLT : Opcodes.IFGE;
                 break;
             case "NOTEQUAL":
-                calculateEquals();
-                negateLastValueOnStack();
+                opcodeCondition = negated ? Opcodes.IFEQ : Opcodes.IFNE;
                 break;
             case "EQUALS":
             default:
-                calculateEquals();
+                opcodeCondition = negated ? Opcodes.IFNE : Opcodes.IFEQ;
         }
-        if (negated) negateLastValueOnStack();
+        storeTrueOnCondition(opcodeCondition);
     }
 
-    public void convertStackTopToBooleanValue() {
-        // trick to convert negatives to 0 and positive values don't matter as long as it's positive
-        mv.visitInsn(Opcodes.DUP);
-        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
-                "abs", "(" + Type.INT_TYPE.getDescriptor() + ")" +
-                        Type.INT_TYPE.getDescriptor(), false);
-        performBytecodeOperation(MovaAction.DIVIDE);
+
+    public void storeTrueOnCondition(int opcodeCondition) {
+        Label trueBranch = new Label();
+        Label falseBranch = new Label();
+        Label conditionEnd = new Label();
+        mv.visitJumpInsn(opcodeCondition, trueBranch);
+        mv.visitJumpInsn(Opcodes.GOTO, falseBranch);
+        mv.visitLabel(trueBranch);
+        pushValueToOpStack(new MovaValue(currentContext, ONE));
+        mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
+        mv.visitLabel(falseBranch);
+        pushValueToOpStack(new MovaValue(currentContext, ZERO));
+        mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
+        mv.visitLabel(conditionEnd);
     }
 
-    private void calculateEquals() {
-        // a == b: a - b + 1
-        performBytecodeOperation(MovaAction.MINUS);
-        incrementLastStackValue(currentContext);
+    public void doIfTrue(Function<MovaParser.ValidStructureContext, Void> function, MovaParser.ValidStructureContext ctx) {
+        Label trueBranch = new Label();
+        Label conditionEnd = new Label();
+        mv.visitJumpInsn(Opcodes.IFGT, trueBranch);
+        mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
+        mv.visitLabel(trueBranch);
+        function.apply(ctx);
+        mv.visitLabel(conditionEnd);
     }
 
-    private void calculateLessThan() {
-        // a < b: (a - b) * (-1)
-        performBytecodeOperation(MovaAction.MINUS);
-        negateLastValueOnStack();
+    public void bitwiseOr() {
+        mv.visitInsn(Opcodes.IOR);
     }
 
-    private void calculateLessOrEqual() {
-        // a <= b: ((a - b) - 1) * (-1)
-        performBytecodeOperation(MovaAction.MINUS);
-        decrementLastStackValue(currentContext);
-        negateLastValueOnStack();
-    }
-
-    private void calculateGreaterThan() {
-        // a > b: a - b
-        performBytecodeOperation(MovaAction.MINUS);
-    }
-
-    private void calculateGreaterOrEqual() {
-        // a >= b: (a - (b - 1))
-        decrementLastStackValue(currentContext);
-        performBytecodeOperation(MovaAction.MINUS);
-    }
-
-    public void performConditionalJump(String comparisonKeyword, boolean negated) {
-        mv.visitJumpInsn(getComparisonOpcodes(comparisonKeyword, negated),
-                labelRegistry.lastElement());
-    }
-
-    private int getComparisonOpcodes(String comparisonKeyword, boolean negated) {
-        int opcodes;
-        switch (comparisonKeyword) {
-            case "LESSTHAN":
-                opcodes = negated ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
-                break;
-            case "LESSOREQUAL":
-                opcodes = negated ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
-                break;
-            case "GREATERTHAN":
-                opcodes = negated ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
-                break;
-            case "GREATEROREQUAL":
-                opcodes = negated ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
-                break;
-            case "NOTEQUAL":
-                opcodes = negated ? Opcodes.IF_ACMPEQ : Opcodes.IF_ICMPNE;
-                break;
-            case "EQUALS":
-            default:
-                opcodes = negated ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
-        }
-        return opcodes;
-    }
-
-    // if top of the stack is greater than 0, go to current label
-    public void jumpIFGT() {
-        mv.visitJumpInsn(Opcodes.IFGT, labelRegistry.lastElement());
-    }
-
-    public void createNewLabel() {
-        labelRegistry.add(new Label());
-    }
-
-    public void writeByteCodeLabel() {
-        mv.visitLabel(labelRegistry.lastElement());
-        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-    }
-
-    public void writeByteCodeEndLabel() {
-        mv.visitLabel(endLabelRegistry.pop());
-        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-    }
-
-    public void createEndLabel() {
-        endLabelRegistry.add(new Label());
-    }
-
-    public void gotoEnd() {
-        mv.visitJumpInsn(Opcodes.GOTO, endLabelRegistry.lastElement());
+    public void bitwiseAnd() {
+        mv.visitInsn(Opcodes.IAND);
     }
 
     /***
