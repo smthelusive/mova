@@ -22,7 +22,7 @@ command: (assignment | decrement | increment | output);
 
 condition : condition (AND | OR) condition
             | LPAREN condition RPAREN
-            | (NOT)? allKindsExpression ((NOT)? (EQUALS | GREATERTHAN | LESSTHAN | GREATEROREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
+            | (NOT)* allKindsExpression ((NOT)* (EQUALS | GREATERTHAN | LESSTHAN | GREATEROREQUAL | LESSOREQUAL | NOTEQUAL) allKindsExpression)*;
 
 conditional: IF condition (THEN | COLON)? validStructure
 (OTHERWISE validStructure)?;

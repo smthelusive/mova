@@ -1,4 +1,4 @@
-// Generated from /Users/nbziubenko/Documents/work/pd_repos/mova/src/main/antlr4/MovaParser.g4 by ANTLR 4.10.1
+// Generated from /Volumes/JaspersSSD1/code/mova/src/main/antlr4/MovaParser.g4 by ANTLR 4.10.1
 package smthelusive.mova.gen;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

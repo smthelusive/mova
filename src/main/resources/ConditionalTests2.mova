@@ -1,10 +1,14 @@
+c is 5.
+if c > 3 if c > 4 if c < 2 show c.
+
 a is 5.
-if a > 3 if a > 4 if a < 2 show a.
+if (a > 2 and (a < 7,5 or 2,6 > 10)) or (not 2 not > a and 1 > a)
+if a not not != 4 show test.
+
+if 0,5 > 0,4 show correct.
+if 0,5 < 0,4 show incorrect.
+if 0,5 > 5 or 5 > 4,5 show yesss.
+if 0,5 > 5 and 5 > 4,5 show nnnnooooo.
 
 // todo implement otherwise
-// todo introduce other contexts to conditionals
-
-a is 5.
-if (a>2 and (a < 7 or 2>10)) or (2>a and 1>a)
-if a not = 4 show test.
-
+// todo introduce string comparison to conditionals

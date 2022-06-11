@@ -35,7 +35,12 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
                 visitCondition(ctx.condition(1));
                 smartByteCodeGenerator.bitwiseAnd();
             } else if (ctx.allKindsExpression().size() == 2) { // allKindsExpression ? allkindsExpression
-                ctx.allKindsExpression().forEach(expressionVisitor::visitAllKindsExpression);
+                expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression(0));
+                // lock context because for comparison we are subtracting one value from the other
+                // for any expression the context should be locked so the types are correctly derived
+                smartByteCodeGenerator.lockContext();
+                expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression(1));
+
                 int amountOfNegations = ctx.NOT().size();
                 boolean negated = (amountOfNegations > 0) && (amountOfNegations % 2 != 0);
                 int comparingSymbolIndex = ctx.NOT().size() + 1;

@@ -250,8 +250,14 @@ public class SmartByteCodeGenerator {
     }
 
     public void compareTwoThings(String comparisonKeyword, boolean negated) {
-        performBytecodeOperation(MovaAction.MINUS);
         int opcodeCondition;
+        performBytecodeOperation(MovaAction.MINUS);
+        if (currentContext == MovaType.DECIMAL) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
+                    "ceil", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
+                            Type.DOUBLE_TYPE.getDescriptor(), false);
+            mv.visitInsn(Opcodes.D2I);
+        }
         switch (comparisonKeyword) {
             case "LESSTHAN":
                 opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;
@@ -275,7 +281,6 @@ public class SmartByteCodeGenerator {
         storeTrueOnCondition(opcodeCondition);
     }
 
-
     public void storeTrueOnCondition(int opcodeCondition) {
         Label trueBranch = new Label();
         Label falseBranch = new Label();
@@ -283,10 +288,10 @@ public class SmartByteCodeGenerator {
         mv.visitJumpInsn(opcodeCondition, trueBranch);
         mv.visitJumpInsn(Opcodes.GOTO, falseBranch);
         mv.visitLabel(trueBranch);
-        pushValueToOpStack(new MovaValue(currentContext, ONE));
+        pushValueToOpStack(new MovaValue(MovaType.INTEGER, ONE));
         mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
         mv.visitLabel(falseBranch);
-        pushValueToOpStack(new MovaValue(currentContext, ZERO));
+        pushValueToOpStack(new MovaValue(MovaType.INTEGER, ZERO));
         mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
         mv.visitLabel(conditionEnd);
     }
