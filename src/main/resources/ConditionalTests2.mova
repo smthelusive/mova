@@ -10,5 +10,13 @@ if 0,5 < 0,4 show incorrect.
 if 0,5 > 5 or 5 > 4,5 show yesss.
 if 0,5 > 5 and 5 > 4,5 show nnnnooooo.
 
+if 1 + 5 = 6 show "awesome".
+if 0,9 + 0,1 is 1 show "super awesome" also show "great!".
+if 0,5 - 0,5 not equal 0 show "oops".
+if 0,5 + 1 > 1,499 show "yes :)".
+if 0,5 + 1 > 1,5 show "no".
+if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 - 2 show "correct!".
+if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 + 2 show "incorrect!".
+
 // todo implement otherwise
 // todo introduce string comparison to conditionals

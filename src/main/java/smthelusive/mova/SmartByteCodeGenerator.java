@@ -167,8 +167,7 @@ public class SmartByteCodeGenerator {
     }
 
     /***
-     * - for integers it uses the bytecode built in integer increment
-     * - for decimal it pushes 1 onto the stack, and applies the sum operation
+     * pushes 1 onto the stack, and applies the sum operation
      *    then it stores the value in the new variable with the same identifier
      * @param identifier (name) of the variable to be incremented
      */
@@ -222,6 +221,13 @@ public class SmartByteCodeGenerator {
                 Type.getDescriptor(String.class),false);
     }
 
+    /***
+     * Perform mathematical operation against two last values on top of operand stack.
+     * To support decimal and string operations without unexpected issues:
+     * <li>between storing first and second value on top of the operand stack, method {@link #lockContext()} must be called;</li>
+     * <li>the values should be stored to the operand stack only using {@link SmartByteCodeGenerator} API.</li>
+     * @param action mathematical or string operation to be performed against two last values on the stack.
+     */
     public void performBytecodeOperation(MovaAction action) {
         contextLocked = false;
         switch (action) {
@@ -249,6 +255,17 @@ public class SmartByteCodeGenerator {
         }
     }
 
+    /***
+     * In order to compare two last values on the stack, it performs a subtracting operation
+     * taking into account the context being integer or decimal.
+     * If the difference is resulted to be in the decimal context, it is rounded up into integer
+     * because all the conditional jumps can be compared against integer values only:
+     * IFGE, IFLT, IFGT, IFLE, IFNE, IFEQ
+     * As the result, we are storing either 0 or 1 at the operand stack.
+     * @param comparisonKeyword can be one of:
+     *                          LESSTHAN, LESSOREQUAL, GREATERTHAN, GREATEROREQUAL, NOTEQUAL, EQUALS
+     * @param negated if true, the condition is the opposite
+     */
     public void compareTwoThings(String comparisonKeyword, boolean negated) {
         int opcodeCondition;
         performBytecodeOperation(MovaAction.MINUS);
@@ -281,6 +298,15 @@ public class SmartByteCodeGenerator {
         storeTrueOnCondition(opcodeCondition);
     }
 
+    /***
+     * Last value is compared to zero, and if the value is
+     * greater than, less than, equals etc. (based on the opcodeCondition),
+     * then 1 is stored on top of the operand stack,
+     * otherwise 0 is stored instead.
+     * This implementation helps support complex nested conditional expressions.
+     * @param opcodeCondition can be one of:
+     *                        156 (IFGE), 155 (IFLT), 157 (IFGT), 158 (IFLE), 154 (IFNE), 153 (IFEQ)
+     */
     public void storeTrueOnCondition(int opcodeCondition) {
         Label trueBranch = new Label();
         Label falseBranch = new Label();
@@ -296,6 +322,12 @@ public class SmartByteCodeGenerator {
         mv.visitLabel(conditionEnd);
     }
 
+    /***
+     * run block of code if the last value on stack is greater than 0.
+     * the last value on stack must be integer
+     * @param function to perform if true
+     * @param ctx valid structure (block) to run
+     */
     public void doIfTrue(Function<MovaParser.ValidStructureContext, Void> function, MovaParser.ValidStructureContext ctx) {
         Label trueBranch = new Label();
         Label conditionEnd = new Label();
