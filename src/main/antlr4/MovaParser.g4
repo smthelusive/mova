@@ -6,7 +6,7 @@ value : IDENTIFIER | INTEGER | DECIMAL | STRING;
 
 expression : expression (MULTIPLY | DIVIDE) expression
             | expression (PLUS | MINUS) expression
-            | expression (PREFIX | SUFFIX | WITH) expression
+            | expression (PREFIX | SUFFIX) expression
             | LPAREN expression RPAREN
             | value;
 decrement: DECREMENT IDENTIFIER | IDENTIFIER DECREMENT;

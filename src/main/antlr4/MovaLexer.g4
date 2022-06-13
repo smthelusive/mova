@@ -7,18 +7,17 @@ UNTIL              : 'until' ;
 TIMES              : 'times';
 REPEAT             : 'repeat' ;
 IF                 : 'if' ;
-OTHERWISE          : 'otherwise' ;
-SHOW               : 'show' ;
+OTHERWISE          : 'otherwise' | 'else' ;
+SHOW               : 'show' | 'print' | 'output' ;
 
 PLUS               : '+' | 'plus' | 'add' ;
 MINUS              : '-' | 'minus' | 'subtract' ;
 MULTIPLY           : '*' | 'multiply' | 'multiply by' ;
 DIVIDE             : '/' | 'divide' | 'divide by' | 'div' ;
 PREFIX             : 'prefix' | 'prefixed' | 'prefixed with' ;
-SUFFIX             : 'suffix' | 'with suffix' ;
-WITH               : 'with' ;
+SUFFIX             : 'suffix' | 'with suffix' | 'suffixed' | 'suffixed with' | 'with' ;
 
-EQUALS             : '=' | 'is' | 'equal to' | 'equals to' | 'equals';
+EQUALS             : '=' | 'is' | 'equal to' | 'equals to' | 'equals' | 'equal' ;
 LPAREN             : '(' ;
 RPAREN             : ')' ;
 THEN               : 'then' ;

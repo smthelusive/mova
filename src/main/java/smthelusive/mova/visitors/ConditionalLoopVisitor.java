@@ -6,6 +6,8 @@ import smthelusive.mova.SmartByteCodeGenerator;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
+import java.util.Optional;
+
 public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
 
     private final MovaProgramVisitor movaProgramVisitor;
@@ -22,7 +24,7 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     public Void visitCondition(MovaParser.ConditionContext ctx) {
         if (ctx.getChildCount() == 1) { // just some expression that can be greater than 0
             expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression(0));
-            smartByteCodeGenerator.storeTrueOnCondition(Opcodes.IFGT);
+            smartByteCodeGenerator.storeBooleanOnCondition(Opcodes.IFGT);
         } else {
             if (ctx.LPAREN() != null) { // (condition)
                 visitCondition(ctx.condition(0));
@@ -55,7 +57,9 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     @Override
     public Void visitConditional(MovaParser.ConditionalContext ctx) {
         visitCondition(ctx.condition());
-        smartByteCodeGenerator.doIfTrue(movaProgramVisitor::visitValidStructure, ctx.validStructure(0));
+        MovaParser.ValidStructureContext ifTrueContext = ctx.validStructure(0);
+        Optional<MovaParser.ValidStructureContext> ifFalseContext = Optional.ofNullable(ctx.validStructure(1));
+        smartByteCodeGenerator.doOrElse(movaProgramVisitor::visitValidStructure, ifTrueContext, ifFalseContext);
         return null;
     }
 

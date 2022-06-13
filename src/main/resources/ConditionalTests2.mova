@@ -18,5 +18,11 @@ if 0,5 + 1 > 1,5 show "no".
 if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 - 2 show "correct!".
 if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 + 2 show "incorrect!".
 
-// todo implement otherwise
 // todo introduce string comparison to conditionals
+
+if 1 = 1 then show yes else show no.
+if 1 > 1 then show no otherwise show yes.
+if 5 > 3 if 4 < 1 show "wrong" else show "right".
+
+// if "aaa" equals "bbb" ...
+// if "aaa" contains "bbb" ...

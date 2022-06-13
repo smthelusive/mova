@@ -295,7 +295,7 @@ public class SmartByteCodeGenerator {
             default:
                 opcodeCondition = negated ? Opcodes.IFNE : Opcodes.IFEQ;
         }
-        storeTrueOnCondition(opcodeCondition);
+        storeBooleanOnCondition(opcodeCondition);
     }
 
     /***
@@ -307,7 +307,7 @@ public class SmartByteCodeGenerator {
      * @param opcodeCondition can be one of:
      *                        156 (IFGE), 155 (IFLT), 157 (IFGT), 158 (IFLE), 154 (IFNE), 153 (IFEQ)
      */
-    public void storeTrueOnCondition(int opcodeCondition) {
+    public void storeBooleanOnCondition(int opcodeCondition) {
         Label trueBranch = new Label();
         Label falseBranch = new Label();
         Label conditionEnd = new Label();
@@ -322,12 +322,7 @@ public class SmartByteCodeGenerator {
         mv.visitLabel(conditionEnd);
     }
 
-    /***
-     * run block of code if the last value on stack is greater than 0.
-     * the last value on stack must be integer
-     * @param function to perform if true
-     * @param ctx valid structure (block) to run
-     */
+
     public void doIfTrue(Function<MovaParser.ValidStructureContext, Void> function, MovaParser.ValidStructureContext ctx) {
         Label trueBranch = new Label();
         Label conditionEnd = new Label();
@@ -335,6 +330,37 @@ public class SmartByteCodeGenerator {
         mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
         mv.visitLabel(trueBranch);
         function.apply(ctx);
+        mv.visitLabel(conditionEnd);
+    }
+
+    /***
+     * run block of code if the last value on stack is greater than 0.
+     * if it's zero, optionally run different block of code
+     * the last value on stack must be integer
+     * @param function to perform on a code block (valid structure context)
+     * @param ifTrueContext valid structure (block) to run if condition is true
+     * @param ifFalseContext optional valid structure (block) to run if condition is false
+     */
+    public void doOrElse(Function<MovaParser.ValidStructureContext, Void> function,
+                         MovaParser.ValidStructureContext ifTrueContext,
+                         Optional<MovaParser.ValidStructureContext> ifFalseContext) {
+        Label trueBranch = new Label();
+        Label falseBranch = new Label();
+        Label conditionEnd = new Label();
+        mv.visitJumpInsn(Opcodes.IFGT, trueBranch);
+        if (ifFalseContext.isPresent()) {
+            mv.visitJumpInsn(Opcodes.GOTO, falseBranch);
+        } else {
+            mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
+        }
+        mv.visitLabel(trueBranch);
+        function.apply(ifTrueContext);
+        mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
+        if (ifFalseContext.isPresent()) {
+            mv.visitLabel(falseBranch);
+            function.apply(ifFalseContext.get());
+            mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
+        }
         mv.visitLabel(conditionEnd);
     }
 
