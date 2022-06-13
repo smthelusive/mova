@@ -7,6 +7,7 @@ import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
 
@@ -65,7 +66,34 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
 
     @Override
     public Void visitLoop(MovaParser.LoopContext ctx) {
-        // todo
+        /*
+        option 1:
+        allKindsExpression - validStructure
+
+        visit expression - make sure integer context
+        assign to variable mova_index
+        L_beforeCondition.
+        visit condition mova_index > 0
+        jump IFGT to L_start
+        goto L_end.
+        L_start
+        visit validStructure
+        decrement mova_index
+        jump to L_beforeCondition
+        L_end
+
+        option 2:
+        condition - validStructure
+
+        L_beforeCondition.
+        visit condition
+        jump IFGT to L_start
+        goto L_end.
+        L_start
+        visit validStructure
+        jump to L_beforeCondition
+        L_end
+         */
         return null;
     }
 }

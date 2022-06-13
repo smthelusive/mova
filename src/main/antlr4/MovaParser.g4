@@ -27,7 +27,7 @@ condition : condition (AND | OR) condition
 conditional: IF condition (THEN | COLON)? validStructure
 (OTHERWISE validStructure)?;
 
-loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON validStructure) |
+loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON? validStructure) |
 ((DO | REPEAT) validStructure allKindsExpression TIMES));
 
 validStructure: (command | conditional | loop | slavaUkraini) (ALSO validStructure)* ;
