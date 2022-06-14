@@ -364,6 +364,42 @@ public class SmartByteCodeGenerator {
         mv.visitLabel(conditionEnd);
     }
 
+    public void expressionBasedLoop(Function<MovaParser.ValidStructureContext, Void> function,
+                     MovaParser.ValidStructureContext ctx,
+                     String movaInternalVarIdentifier) {
+        Label beforeCondition = new Label();
+        Label start = new Label();
+        Label end = new Label();
+        mv.visitLabel(beforeCondition);
+        loadVariableToOpStack(movaInternalVarIdentifier);
+        mv.visitJumpInsn(Opcodes.IFGT, start);
+        mv.visitJumpInsn(Opcodes.GOTO, end);
+        mv.visitLabel(start);
+        function.apply(ctx);
+        decrementVariable(movaInternalVarIdentifier);
+        mv.visitJumpInsn(Opcodes.GOTO, beforeCondition);
+        mv.visitLabel(end);
+    }
+
+    // todo refactor
+    public void conditionBasedLoop(
+            Function<MovaParser.ConditionContext, Void> conditionVisitorFunction,
+            MovaParser.ConditionContext condition,
+            Function<MovaParser.ValidStructureContext, Void> validStructureVisitorFunction,
+                                   MovaParser.ValidStructureContext validStructure) {
+        Label beforeCondition = new Label();
+        Label start = new Label();
+        Label end = new Label();
+        mv.visitLabel(beforeCondition);
+        conditionVisitorFunction.apply(condition);
+        mv.visitJumpInsn(Opcodes.IFGT, start);
+        mv.visitJumpInsn(Opcodes.GOTO, end);
+        mv.visitLabel(start);
+        validStructureVisitorFunction.apply(validStructure);
+        mv.visitJumpInsn(Opcodes.GOTO, beforeCondition);
+        mv.visitLabel(end);
+    }
+
     public void bitwiseOr() {
         mv.visitInsn(Opcodes.IOR);
     }

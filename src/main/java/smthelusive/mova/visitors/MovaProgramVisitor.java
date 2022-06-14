@@ -37,6 +37,7 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
     @Override
     public Void visitValidStructure(MovaParser.ValidStructureContext ctx) {
         if (ctx.conditional() != null) conditionalLoopVisitor.visitConditional(ctx.conditional());
+        if (ctx.loop() != null) conditionalLoopVisitor.visitLoop(ctx.loop());
         if (ctx.command() != null) commandVisitor.visitCommand(ctx.command());
         ctx.validStructure().forEach(this::visitValidStructure);
         return null;

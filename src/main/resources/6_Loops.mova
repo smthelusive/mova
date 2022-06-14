@@ -1,13 +1,15 @@
 // expression-based loops:
-do 5 times:
-show "five times".
+//do 5 times:
+//show "five times".
 
-repeat 7 - 5 times
-show two.
+//repeat 7 - 5 times
+//show two.
 
-do show "twice" 2 times.
+//do show "twice" 2 times.
 
 // condition-based loops:
 a is 0.
 repeat until a is 5
 increment a also show a.
+
+// todo fix variables!

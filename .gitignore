@@ -4,10 +4,11 @@ src/main/antlr4/gen/
 .DS_Store
 src/.DS_Store
 src/main/.DS_Store
-MovaTest.class
-MovaTest2.class
-MovaTest3.class
-ConditionalTests.class
-ConditionalTests2.class
+1_ExpressionTests.class
+2_ExpressionsIncDecStringOperations.class
+3_IncrementDecrement.class
+4_Conditionals.class
+5_ConditionalsDecimalNestedElse.mova
+6_Loops.class
 src/main/java/smthelusive/mova/Test.java
 gen/

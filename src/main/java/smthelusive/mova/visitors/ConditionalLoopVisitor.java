@@ -14,6 +14,12 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     private final MovaProgramVisitor movaProgramVisitor;
     private final SmartByteCodeGenerator smartByteCodeGenerator;
     private final ExpressionVisitor expressionVisitor;
+    private final static String MOVA_INDEX_RESERVED = "mova_index";
+    private int movaInternalVariableNumber = 0;
+
+    private String getNewMovaInternalVariableIdentifier() {
+        return MOVA_INDEX_RESERVED + movaInternalVariableNumber++;
+    }
 
     public ConditionalLoopVisitor(MovaProgramVisitor movaProgramVisitor) {
         this.movaProgramVisitor = movaProgramVisitor;
@@ -66,34 +72,20 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
 
     @Override
     public Void visitLoop(MovaParser.LoopContext ctx) {
-        /*
-        option 1:
-        allKindsExpression - validStructure
-
-        visit expression - make sure integer context
-        assign to variable mova_index
-        L_beforeCondition.
-        visit condition mova_index > 0
-        jump IFGT to L_start
-        goto L_end.
-        L_start
-        visit validStructure
-        decrement mova_index
-        jump to L_beforeCondition
-        L_end
-
-        option 2:
-        condition - validStructure
-
-        L_beforeCondition.
-        visit condition
-        jump IFGT to L_start
-        goto L_end.
-        L_start
-        visit validStructure
-        jump to L_beforeCondition
-        L_end
-         */
+        if (ctx.allKindsExpression() != null) {
+            expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression());
+            // todo make sure integer context
+            String movaInternalVarIdentifier = getNewMovaInternalVariableIdentifier();
+            smartByteCodeGenerator.addVariableAssignment(movaInternalVarIdentifier);
+            smartByteCodeGenerator.expressionBasedLoop(movaProgramVisitor::visitValidStructure,
+                    ctx.validStructure(), movaInternalVarIdentifier);
+        } else if (ctx.condition() != null) {
+            smartByteCodeGenerator.conditionBasedLoop(
+                    this::visitCondition,
+                    ctx.condition(),
+                    movaProgramVisitor::visitValidStructure,
+                    ctx.validStructure());
+        }
         return null;
     }
 }
