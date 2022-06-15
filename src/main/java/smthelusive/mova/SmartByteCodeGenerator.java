@@ -11,7 +11,6 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Function;
 
-// todo overwriting variables creates new variable instead of updating
 public class SmartByteCodeGenerator {
 
     private final static String ONE = "1";
@@ -47,7 +46,16 @@ public class SmartByteCodeGenerator {
         }
     }
 
-    // todo refactor a little
+    public void switchContextToInteger() {
+        if (currentContext == MovaType.DECIMAL) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
+                    "ceil", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
+                            Type.DOUBLE_TYPE.getDescriptor(), false);
+            mv.visitInsn(Opcodes.D2I);
+            currentContext = MovaType.INTEGER;
+        }
+    }
+
     private void switchContextToString() {
         if (currentContext == MovaType.INTEGER) {
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String",
@@ -103,18 +111,20 @@ public class SmartByteCodeGenerator {
             default: opcode = Opcodes.ISTORE;
         }
 
-        mv.visitVarInsn(opcode, variableIndex);
-        byteCodeVariableRegistry.put(identifier, new RegistryVariable(variableIndex, currentContext));
-        variableIndex++;
-        // double takes 2 slots:
-        if (currentContext == MovaType.DECIMAL) {
+        Optional<RegistryVariable> existingVariable = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
+        if (existingVariable.isPresent()) {
+            mv.visitVarInsn(opcode, existingVariable.get().getId());
+        } else {
+            mv.visitVarInsn(opcode, variableIndex);
+            byteCodeVariableRegistry.put(identifier, new RegistryVariable(variableIndex, currentContext));
             variableIndex++;
+            // double takes 2 slots:
+            if (currentContext == MovaType.DECIMAL) {
+                variableIndex++;
+            }
         }
     }
 
-    /***
-     * todo
-     */
     public void printlnValueOnTopOfOpStack() {
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
         // bring the value we want to print back on the top of stack:
@@ -269,12 +279,13 @@ public class SmartByteCodeGenerator {
     public void compareTwoThings(String comparisonKeyword, boolean negated) {
         int opcodeCondition;
         performBytecodeOperation(MovaAction.MINUS);
-        if (currentContext == MovaType.DECIMAL) {
-            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
-                    "ceil", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
-                            Type.DOUBLE_TYPE.getDescriptor(), false);
-            mv.visitInsn(Opcodes.D2I);
-        }
+        switchContextToInteger();
+//        if (currentContext == MovaType.DECIMAL) {
+//            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
+//                    "ceil", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
+//                            Type.DOUBLE_TYPE.getDescriptor(), false);
+//            mv.visitInsn(Opcodes.D2I);
+//        }
         switch (comparisonKeyword) {
             case "LESSTHAN":
                 opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;
@@ -319,17 +330,6 @@ public class SmartByteCodeGenerator {
         mv.visitLabel(falseBranch);
         pushValueToOpStack(new MovaValue(MovaType.INTEGER, ZERO));
         mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
-        mv.visitLabel(conditionEnd);
-    }
-
-
-    public void doIfTrue(Function<MovaParser.ValidStructureContext, Void> function, MovaParser.ValidStructureContext ctx) {
-        Label trueBranch = new Label();
-        Label conditionEnd = new Label();
-        mv.visitJumpInsn(Opcodes.IFGT, trueBranch);
-        mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
-        mv.visitLabel(trueBranch);
-        function.apply(ctx);
         mv.visitLabel(conditionEnd);
     }
 
@@ -392,7 +392,7 @@ public class SmartByteCodeGenerator {
         Label end = new Label();
         mv.visitLabel(beforeCondition);
         conditionVisitorFunction.apply(condition);
-        mv.visitJumpInsn(Opcodes.IFGT, start);
+        mv.visitJumpInsn(Opcodes.IFEQ, start);
         mv.visitJumpInsn(Opcodes.GOTO, end);
         mv.visitLabel(start);
         validStructureVisitorFunction.apply(validStructure);

@@ -7,7 +7,6 @@ import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
 
@@ -74,7 +73,7 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     public Void visitLoop(MovaParser.LoopContext ctx) {
         if (ctx.allKindsExpression() != null) {
             expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression());
-            // todo make sure integer context
+            smartByteCodeGenerator.switchContextToInteger();
             String movaInternalVarIdentifier = getNewMovaInternalVariableIdentifier();
             smartByteCodeGenerator.addVariableAssignment(movaInternalVarIdentifier);
             smartByteCodeGenerator.expressionBasedLoop(movaProgramVisitor::visitValidStructure,

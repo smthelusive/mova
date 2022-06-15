@@ -15,14 +15,6 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
         return expressionVisitor;
     }
 
-    public CommandVisitor getCommandVisitor() {
-        return commandVisitor;
-    }
-
-    public ConditionalLoopVisitor getConditionalLoopVisitor() {
-        return conditionalLoopVisitor;
-    }
-
     public SmartByteCodeGenerator getSmartByteCodeGenerator() {
         return smartByteCodeGenerator;
     }
