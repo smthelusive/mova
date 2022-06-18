@@ -19,6 +19,12 @@ import java.util.Optional;
  */
 public class SmartCompiler {
     public static final SmartByteCodeGenerator smartByteCodeGenerator = new SmartByteCodeGenerator();
+    private final static String MOVA_VAR_RESERVED = "mova_var";
+    private static int movaInternalVariableNumber = 0;
+
+    public static String getNewMovaInternalVariableIdentifier() {
+        return MOVA_VAR_RESERVED + movaInternalVariableNumber++;
+    }
 
     public static void main(String[] args) {
         Optional.ofNullable(args[0]).ifPresent(inputFile -> {

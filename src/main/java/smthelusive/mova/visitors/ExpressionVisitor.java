@@ -14,6 +14,7 @@ import java.util.Optional;
 public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
 
     private final SmartByteCodeGenerator smartBytecodeGenerator;
+    private static final String ARGUMENT_PREFIX = "arg";
 
     public ExpressionVisitor(MovaProgramVisitor movaProgramVisitor) {
         this.smartBytecodeGenerator = movaProgramVisitor.getSmartByteCodeGenerator();
@@ -34,19 +35,36 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
             // normal expression 0 = value, 1 = action, 2 = value:
             else {
                 visit(ctx.getChild(0));
-                smartBytecodeGenerator.lockContext();
-                visit(ctx.getChild(2));
                 TerminalNode actionNode = (TerminalNode)ctx.getChild(1);
                 MovaAction action = OperationsUtil.convertedAction(
                         MovaParser.VOCABULARY.getSymbolicName((actionNode.getSymbol().getType())));
+                boolean isArithmeticAction = isArithmeticAction(action);
+                if (isArithmeticAction) smartBytecodeGenerator.switchContextToDecimal();
+                smartBytecodeGenerator.lockContext();
+                visit(ctx.getChild(2));
+//                if (isArithmeticAction) smartBytecodeGenerator.switchContextToDecimal();
                 smartBytecodeGenerator.performBytecodeOperation(action);
             }
         }
         return null;
     }
 
+    private boolean isArithmeticAction(MovaAction action) {
+        return action.equals(MovaAction.MINUS) ||
+                action.equals(MovaAction.PLUS) ||
+                action.equals(MovaAction.MULTIPLY) ||
+                action.equals(MovaAction.DIVIDE);
+    }
+
     @Override
     public Void visitValue(MovaParser.ValueContext ctx) {
+        if (ctx.ARGUMENT() != null) {
+            String arg = ctx.ARGUMENT().getText();
+            int argIndex = Integer.parseInt(arg.replace(ARGUMENT_PREFIX, ""));
+            smartBytecodeGenerator.loadArgumentByIndex(argIndex);
+            return null;
+        }
+
         if (ctx.IDENTIFIER() != null) {
             smartBytecodeGenerator.loadVariableToOpStack(ctx.getText());
             return null;

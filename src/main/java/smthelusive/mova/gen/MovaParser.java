@@ -21,8 +21,8 @@ public class MovaParser extends Parser {
 		MINUS=10, MULTIPLY=11, DIVIDE=12, PREFIX=13, SUFFIX=14, EQUALS=15, LPAREN=16, 
 		RPAREN=17, THEN=18, COLON=19, OR=20, AND=21, NOT=22, INCREMENT=23, DECREMENT=24, 
 		COMMA=25, ALSO=26, DOT=27, GREATERTHAN=28, LESSTHAN=29, GREATEROREQUAL=30, 
-		LESSOREQUAL=31, NOTEQUAL=32, INTEGER=33, DECIMAL=34, STRING=35, IDENTIFIER=36, 
-		COMMENT=37, SLAVAUKRAINI=38;
+		LESSOREQUAL=31, NOTEQUAL=32, INTEGER=33, DECIMAL=34, ARGUMENT=35, STRING=36, 
+		IDENTIFIER=37, COMMENT=38, SLAVAUKRAINI=39;
 	public static final int
 		RULE_value = 0, RULE_expression = 1, RULE_decrement = 2, RULE_increment = 3, 
 		RULE_allKindsExpression = 4, RULE_assignment = 5, RULE_output = 6, RULE_slavaUkraini = 7, 
@@ -51,8 +51,8 @@ public class MovaParser extends Parser {
 			"PLUS", "MINUS", "MULTIPLY", "DIVIDE", "PREFIX", "SUFFIX", "EQUALS", 
 			"LPAREN", "RPAREN", "THEN", "COLON", "OR", "AND", "NOT", "INCREMENT", 
 			"DECREMENT", "COMMA", "ALSO", "DOT", "GREATERTHAN", "LESSTHAN", "GREATEROREQUAL", 
-			"LESSOREQUAL", "NOTEQUAL", "INTEGER", "DECIMAL", "STRING", "IDENTIFIER", 
-			"COMMENT", "SLAVAUKRAINI"
+			"LESSOREQUAL", "NOTEQUAL", "INTEGER", "DECIMAL", "ARGUMENT", "STRING", 
+			"IDENTIFIER", "COMMENT", "SLAVAUKRAINI"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -107,6 +107,7 @@ public class MovaParser extends Parser {
 	}
 
 	public static class ValueContext extends ParserRuleContext {
+		public TerminalNode ARGUMENT() { return getToken(MovaParser.ARGUMENT, 0); }
 		public TerminalNode IDENTIFIER() { return getToken(MovaParser.IDENTIFIER, 0); }
 		public TerminalNode INTEGER() { return getToken(MovaParser.INTEGER, 0); }
 		public TerminalNode DECIMAL() { return getToken(MovaParser.DECIMAL, 0); }
@@ -131,7 +132,7 @@ public class MovaParser extends Parser {
 			{
 			setState(28);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << DECIMAL) | (1L << STRING) | (1L << IDENTIFIER))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << DECIMAL) | (1L << ARGUMENT) | (1L << STRING) | (1L << IDENTIFIER))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -212,6 +213,7 @@ public class MovaParser extends Parser {
 				break;
 			case INTEGER:
 			case DECIMAL:
+			case ARGUMENT:
 			case STRING:
 			case IDENTIFIER:
 				{
@@ -1000,6 +1002,7 @@ public class MovaParser extends Parser {
 				case DECREMENT:
 				case INTEGER:
 				case DECIMAL:
+				case ARGUMENT:
 				case STRING:
 				case IDENTIFIER:
 					{
@@ -1271,7 +1274,7 @@ public class MovaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001&\u00ad\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\'\u00ad\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -1296,7 +1299,7 @@ public class MovaParser extends Parser {
 		"\f\u0001\r\u0001\r\u0001\r\u0005\r\u00a6\b\r\n\r\f\r\u00a9\t\r\u0001\r"+
 		"\u0001\r\u0001\r\u0000\u0002\u0002\u0012\u000e\u0000\u0002\u0004\u0006"+
 		"\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u0000\b\u0001\u0000!"+
-		"$\u0001\u0000\u000b\f\u0001\u0000\t\n\u0001\u0000\r\u000e\u0002\u0000"+
+		"%\u0001\u0000\u000b\f\u0001\u0000\t\n\u0001\u0000\r\u000e\u0002\u0000"+
 		"\u000f\u000f\u001c \u0001\u0000\u0014\u0015\u0001\u0000\u0012\u0013\u0002"+
 		"\u0000\u0002\u0002\u0005\u0005\u00b8\u0000\u001c\u0001\u0000\u0000\u0000"+
 		"\u0002$\u0001\u0000\u0000\u0000\u00048\u0001\u0000\u0000\u0000\u0006>"+
@@ -1316,16 +1319,16 @@ public class MovaParser extends Parser {
 		"\u0000\u0000\u0000/,\u0001\u0000\u0000\u000003\u0001\u0000\u0000\u0000"+
 		"1/\u0001\u0000\u0000\u000012\u0001\u0000\u0000\u00002\u0003\u0001\u0000"+
 		"\u0000\u000031\u0001\u0000\u0000\u000045\u0005\u0018\u0000\u000059\u0005"+
-		"$\u0000\u000067\u0005$\u0000\u000079\u0005\u0018\u0000\u000084\u0001\u0000"+
+		"%\u0000\u000067\u0005%\u0000\u000079\u0005\u0018\u0000\u000084\u0001\u0000"+
 		"\u0000\u000086\u0001\u0000\u0000\u00009\u0005\u0001\u0000\u0000\u0000"+
-		":;\u0005\u0017\u0000\u0000;?\u0005$\u0000\u0000<=\u0005$\u0000\u0000="+
+		":;\u0005\u0017\u0000\u0000;?\u0005%\u0000\u0000<=\u0005%\u0000\u0000="+
 		"?\u0005\u0017\u0000\u0000>:\u0001\u0000\u0000\u0000><\u0001\u0000\u0000"+
 		"\u0000?\u0007\u0001\u0000\u0000\u0000@D\u0003\u0002\u0001\u0000AD\u0003"+
 		"\u0006\u0003\u0000BD\u0003\u0004\u0002\u0000C@\u0001\u0000\u0000\u0000"+
 		"CA\u0001\u0000\u0000\u0000CB\u0001\u0000\u0000\u0000D\t\u0001\u0000\u0000"+
-		"\u0000EF\u0005$\u0000\u0000FG\u0005\u000f\u0000\u0000GH\u0003\b\u0004"+
+		"\u0000EF\u0005%\u0000\u0000FG\u0005\u000f\u0000\u0000GH\u0003\b\u0004"+
 		"\u0000H\u000b\u0001\u0000\u0000\u0000IJ\u0005\b\u0000\u0000JK\u0003\b"+
-		"\u0004\u0000K\r\u0001\u0000\u0000\u0000LM\u0005&\u0000\u0000M\u000f\u0001"+
+		"\u0004\u0000K\r\u0001\u0000\u0000\u0000LM\u0005\'\u0000\u0000M\u000f\u0001"+
 		"\u0000\u0000\u0000NS\u0003\n\u0005\u0000OS\u0003\u0004\u0002\u0000PS\u0003"+
 		"\u0006\u0003\u0000QS\u0003\f\u0006\u0000RN\u0001\u0000\u0000\u0000RO\u0001"+
 		"\u0000\u0000\u0000RP\u0001\u0000\u0000\u0000RQ\u0001\u0000\u0000\u0000"+

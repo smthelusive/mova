@@ -38,10 +38,20 @@ public class SmartByteCodeGenerator {
         } else currentContext = movaType;
     }
 
-    private void switchContextToDecimal() {
+    public void switchContextToDecimal() {
         if (currentContext == MovaType.INTEGER) {
             // convert previous value to be able to perform double operation
             mv.visitInsn(Opcodes.I2D);
+            currentContext = MovaType.DECIMAL;
+        } else if (currentContext == MovaType.STRING) {
+            // string.replace(".", ",")
+            mv.visitLdcInsn(".");
+            mv.visitLdcInsn(",");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "replace",
+                    "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double",
+                    "parseDouble", "(" + Type.getType(String.class) + ")" +
+                            Type.DOUBLE_TYPE.getDescriptor(), false);
             currentContext = MovaType.DECIMAL;
         }
     }
@@ -95,6 +105,12 @@ public class SmartByteCodeGenerator {
         mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main",
              "([" + Type.getType(String.class).getDescriptor() + ")V", null, null);
         mv.visitCode();
+    }
+
+    public void loadArgumentByIndex(int argIndex) {
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitLdcInsn(argIndex);
+        mv.visitInsn(Opcodes.AALOAD);
     }
 
     /***
@@ -244,18 +260,22 @@ public class SmartByteCodeGenerator {
             case PLUS:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IADD);
                 else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DADD);
+                else switchContextToDecimal();
                 break;
             case MINUS:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.ISUB);
                 else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DSUB);
+                else switchContextToDecimal();
                 break;
             case MULTIPLY:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IMUL);
                 else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DMUL);
+                else switchContextToDecimal();
                 break;
             case DIVIDE:
                 if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IDIV);
                 else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DDIV);
+                else switchContextToDecimal();
                 break;
             case PREFIX: concatenate(true);
                 break;
@@ -280,12 +300,6 @@ public class SmartByteCodeGenerator {
         int opcodeCondition;
         performBytecodeOperation(MovaAction.MINUS);
         switchContextToInteger();
-//        if (currentContext == MovaType.DECIMAL) {
-//            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
-//                    "ceil", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
-//                            Type.DOUBLE_TYPE.getDescriptor(), false);
-//            mv.visitInsn(Opcodes.D2I);
-//        }
         switch (comparisonKeyword) {
             case "LESSTHAN":
                 opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;

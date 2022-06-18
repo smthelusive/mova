@@ -3,6 +3,7 @@ package smthelusive.mova.visitors;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.objectweb.asm.Opcodes;
 import smthelusive.mova.SmartByteCodeGenerator;
+import smthelusive.mova.SmartCompiler;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
@@ -13,12 +14,6 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     private final MovaProgramVisitor movaProgramVisitor;
     private final SmartByteCodeGenerator smartByteCodeGenerator;
     private final ExpressionVisitor expressionVisitor;
-    private final static String MOVA_INDEX_RESERVED = "mova_index";
-    private int movaInternalVariableNumber = 0;
-
-    private String getNewMovaInternalVariableIdentifier() {
-        return MOVA_INDEX_RESERVED + movaInternalVariableNumber++;
-    }
 
     public ConditionalLoopVisitor(MovaProgramVisitor movaProgramVisitor) {
         this.movaProgramVisitor = movaProgramVisitor;
@@ -74,7 +69,7 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
         if (ctx.allKindsExpression() != null) {
             expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression());
             smartByteCodeGenerator.switchContextToInteger();
-            String movaInternalVarIdentifier = getNewMovaInternalVariableIdentifier();
+            String movaInternalVarIdentifier = SmartCompiler.getNewMovaInternalVariableIdentifier();
             smartByteCodeGenerator.addVariableAssignment(movaInternalVarIdentifier);
             smartByteCodeGenerator.expressionBasedLoop(movaProgramVisitor::visitValidStructure,
                     ctx.validStructure(), movaInternalVarIdentifier);

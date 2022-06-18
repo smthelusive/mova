@@ -46,6 +46,7 @@ fragment ESCAPE_CHAR : '\\' [0btnfr"'\\] ;
 
 INTEGER            : '-'? DIGIT+ ;
 DECIMAL            : '-'? DIGIT+ COMMA DIGIT+ ;
+ARGUMENT           : 'arg' INTEGER;
 STRING             : '"' ( ~[\\"\r\n] | ESCAPE_CHAR )* '"' ;
 IDENTIFIER         : SYMBOL+ ;
 
