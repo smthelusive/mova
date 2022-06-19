@@ -28,20 +28,25 @@ public class SmartByteCodeGenerator {
             // convert previous value to be able to perform double operation
             mv.visitInsn(Opcodes.I2D);
         } else if (fromType == MovaType.STRING) {
-            mv.visitLdcInsn(".");
             mv.visitLdcInsn(",");
+            mv.visitLdcInsn(".");
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "replace",
-                    "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+                    "(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;", false);
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double",
                     "parseDouble", "(" + Type.getType(String.class) + ")" +
                             Type.DOUBLE_TYPE.getDescriptor(), false);
+            typeStack.pop();
+            typeStack.add(MovaType.DECIMAL);
         }
-        typeStack.pop();
-        typeStack.add(MovaType.DECIMAL);
         // swap back in the original order:
         if (left) swap();
     }
 
+    private void popNValuesFromLocalStack(int n) {
+        for (int i = 0; i < n; i++) {
+            typeStack.pop();
+        }
+    }
     public void convertToInteger(boolean left, MovaType fromType) {
         // swap to be able to convert the element before the last one
         if (left) swap();
@@ -282,8 +287,7 @@ public class SmartByteCodeGenerator {
                 convertToString(false, rightType);
             }
             concatenate(action == MovaAction.PREFIX);
-            typeStack.pop();
-            typeStack.pop();
+            popNValuesFromLocalStack(2);
             typeStack.add(MovaType.STRING);
         } else {
             MovaType actionType;
@@ -301,9 +305,17 @@ public class SmartByteCodeGenerator {
                 convertToInteger(true, leftType);
                 actionType = MovaType.INTEGER;
             } else actionType = leftType;
+            if (leftType.equals(MovaType.STRING)) {
+                convertToDecimal(true, leftType);
+                actionType = MovaType.DECIMAL;
+            }
+            if (rightType.equals(MovaType.STRING)) {
+                convertToDecimal(false, rightType);
+                actionType = MovaType.DECIMAL;
+            }
+
             doArithmeticOperation(actionType, action);
-            typeStack.pop();
-            typeStack.pop();
+            popNValuesFromLocalStack(2);
             typeStack.add(actionType);
         }
     }
