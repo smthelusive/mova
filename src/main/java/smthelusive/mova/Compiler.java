@@ -17,8 +17,8 @@ import java.util.Arrays;
  *  - visits the main program node which through the tree of visitors generates the bytecode representation of a program
  *  - writes the bytecode to a class file
  */
-public class SmartCompiler {
-    public static final SmartByteCodeGenerator smartByteCodeGenerator = new SmartByteCodeGenerator();
+public class Compiler {
+    public static final ByteCodeGenerator BYTE_CODE_GENERATOR = new ByteCodeGenerator();
     private final static String MOVA_VAR_RESERVED = "mova_var";
     private static int movaInternalVariableNumber = 0;
 
@@ -33,10 +33,10 @@ public class SmartCompiler {
                 MovaParser parser = new MovaParser(new CommonTokenStream(lexer));
                 String[] filename = inputFile.split("/");
                 String programName = filename[filename.length - 1].replace(".mova", "");
-                smartByteCodeGenerator.init(programName);
-                MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(smartByteCodeGenerator);
+                BYTE_CODE_GENERATOR.init(programName);
+                MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(BYTE_CODE_GENERATOR);
                 movaProgramVisitor.visit(parser.validProgram());
-                byte[] bytes = smartByteCodeGenerator.cleanCloseProgram();
+                byte[] bytes = BYTE_CODE_GENERATOR.cleanCloseProgram();
                 FileOutputStream stream = new FileOutputStream(programName + ".class");
                 stream.write(bytes);
             } catch (IOException e) {

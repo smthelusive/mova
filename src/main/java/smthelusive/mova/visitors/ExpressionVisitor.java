@@ -1,23 +1,22 @@
 package smthelusive.mova.visitors;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
-import smthelusive.mova.SmartByteCodeGenerator;
+import smthelusive.mova.ByteCodeGenerator;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
-import smthelusive.mova.util.OperationsUtil;
 
 import java.util.Optional;
 
 public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
 
-    private final SmartByteCodeGenerator smartBytecodeGenerator;
+    private final ByteCodeGenerator bytecodeGenerator;
     private static final String ARGUMENT_PREFIX = "arg";
 
     public ExpressionVisitor(MovaProgramVisitor movaProgramVisitor) {
-        this.smartBytecodeGenerator = movaProgramVisitor.getSmartByteCodeGenerator();
+        this.bytecodeGenerator = movaProgramVisitor.getSmartByteCodeGenerator();
     }
 
     @Override
@@ -37,9 +36,9 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
                 visit(ctx.getChild(0));
                 visit(ctx.getChild(2));
                 TerminalNode actionNode = (TerminalNode)ctx.getChild(1);
-                MovaAction action = OperationsUtil.convertedAction(
+                MovaAction action = convertedAction(
                         MovaParser.VOCABULARY.getSymbolicName((actionNode.getSymbol().getType())));
-                smartBytecodeGenerator.performBytecodeOperation(action);
+                bytecodeGenerator.performBytecodeOperation(action);
             }
         }
         return null;
@@ -50,12 +49,12 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
         if (ctx.ARGUMENT() != null) {
             String arg = ctx.ARGUMENT().getText();
             int argIndex = Integer.parseInt(arg.replace(ARGUMENT_PREFIX, ""));
-            smartBytecodeGenerator.loadArgumentByIndex(argIndex);
+            bytecodeGenerator.loadArgumentByIndex(argIndex);
             return null;
         }
 
         if (ctx.IDENTIFIER() != null) {
-            smartBytecodeGenerator.loadVariableToOpStack(ctx.getText());
+            bytecodeGenerator.loadVariableToOpStack(ctx.getText());
             return null;
         }
 
@@ -70,10 +69,27 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
         }
         else if (ctx.STRING() != null) {
             movaValue.setMovaType(MovaType.STRING);
-            movaValue.setRawValue(OperationsUtil.clean(ctx.getText()));
+            movaValue.setRawValue(clean(ctx.getText()));
         }
-        smartBytecodeGenerator.pushValueToOpStack(movaValue);
+        bytecodeGenerator.pushValueToOpStack(movaValue);
         return null;
+    }
+
+    private String clean(String quotedString) {
+        return quotedString.replaceAll("^\"|\"$", "");
+    }
+
+    private MovaAction convertedAction(String rawAction) {
+        switch (rawAction) {
+            case "PLUS": return MovaAction.PLUS;
+            case "MINUS": return MovaAction.MINUS;
+            case "MULTIPLY": return MovaAction.MULTIPLY;
+            case "DIVIDE": return MovaAction.DIVIDE;
+            case "PREFIX": return MovaAction.PREFIX;
+            case "SUFFIX": return MovaAction.SUFFIX;
+            case "WITH":
+            default: return MovaAction.WITH;
+        }
     }
 
     @Override
@@ -84,15 +100,25 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
         return null;
     }
 
+    /***
+     * decrements the last value on stack and keeps
+     * the result on top of the stack for further use
+     * @param ctx decrement context
+     */
     public void visitDecrementForReuse(MovaParser.DecrementContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
-        smartBytecodeGenerator.decrementVariable(identifier);
-        smartBytecodeGenerator.loadVariableToOpStack(identifier);
+        bytecodeGenerator.decrementVariable(identifier);
+        bytecodeGenerator.loadVariableToOpStack(identifier);
     }
 
+    /***
+     * increments the last value on stack and keeps
+     * the result on top of the stack for further use
+     * @param ctx increment context
+     */
     public void visitIncrementForReuse(MovaParser.IncrementContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
-        smartBytecodeGenerator.incrementVariable(identifier);
-        smartBytecodeGenerator.loadVariableToOpStack(identifier);
+        bytecodeGenerator.incrementVariable(identifier);
+        bytecodeGenerator.loadVariableToOpStack(identifier);
     }
 }

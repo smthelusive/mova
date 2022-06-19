@@ -1,8 +1,8 @@
 package smthelusive.mova.domain;
 
 public class RegistryVariable {
-    private int id;
-    private MovaType type;
+    private final int id;
+    private final MovaType type;
 
     public RegistryVariable(int id, MovaType type) {
         this.id = id;
@@ -13,15 +13,7 @@ public class RegistryVariable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public MovaType getType() {
         return type;
-    }
-
-    public void setType(MovaType type) {
-        this.type = type;
     }
 }

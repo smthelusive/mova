@@ -1,6 +1,6 @@
 package smthelusive.mova.visitors;
 
-import smthelusive.mova.SmartByteCodeGenerator;
+import smthelusive.mova.ByteCodeGenerator;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
@@ -9,18 +9,18 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
     private final ExpressionVisitor expressionVisitor;
     private final CommandVisitor commandVisitor;
     private final ConditionalLoopVisitor conditionalLoopVisitor;
-    private final SmartByteCodeGenerator smartByteCodeGenerator;
+    private final ByteCodeGenerator byteCodeGenerator;
 
     public ExpressionVisitor getExpressionVisitor() {
         return expressionVisitor;
     }
 
-    public SmartByteCodeGenerator getSmartByteCodeGenerator() {
-        return smartByteCodeGenerator;
+    public ByteCodeGenerator getSmartByteCodeGenerator() {
+        return byteCodeGenerator;
     }
 
-    public MovaProgramVisitor(SmartByteCodeGenerator smartByteCodeGenerator) {
-        this.smartByteCodeGenerator = smartByteCodeGenerator;
+    public MovaProgramVisitor(ByteCodeGenerator byteCodeGenerator) {
+        this.byteCodeGenerator = byteCodeGenerator;
         expressionVisitor = new ExpressionVisitor(this);
         commandVisitor = new CommandVisitor(this);
         conditionalLoopVisitor = new ConditionalLoopVisitor(this);
