@@ -15,36 +15,19 @@ public class SmartByteCodeGenerator {
 
     private final static String ONE = "1";
     private final static String ZERO = "0";
-    private MovaType currentContext;
-    private boolean contextLocked = false;
+    private final static Stack<MovaType> typeStack = new Stack<>();
     private final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
     private int variableIndex = 1;
     private MethodVisitor mv;
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
 
-    /***
-     * the strongest context is String, then goes Decimal, the last is Integer
-     * context might be locked for expressions.
-     * first incoming value locks the context and the second one relies on it. when it's done, it releases the context
-     * @param movaType the incoming type context to process
-     */
-    public void processContext(MovaType movaType) {
-        if (contextLocked) {
-            if (movaType == MovaType.DECIMAL) {
-                switchContextToDecimal();
-            } else if (movaType == MovaType.STRING) {
-                switchContextToString();
-            }
-        } else currentContext = movaType;
-    }
-
-    public void switchContextToDecimal() {
-        if (currentContext == MovaType.INTEGER) {
+    public void convertToDecimal(boolean left, MovaType fromType) {
+        // swap to be able to convert the element before the last one
+        if (left) swap();
+        if (fromType == MovaType.INTEGER) {
             // convert previous value to be able to perform double operation
             mv.visitInsn(Opcodes.I2D);
-            currentContext = MovaType.DECIMAL;
-        } else if (currentContext == MovaType.STRING) {
-            // string.replace(".", ",")
+        } else if (fromType == MovaType.STRING) {
             mv.visitLdcInsn(".");
             mv.visitLdcInsn(",");
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "replace",
@@ -52,39 +35,52 @@ public class SmartByteCodeGenerator {
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double",
                     "parseDouble", "(" + Type.getType(String.class) + ")" +
                             Type.DOUBLE_TYPE.getDescriptor(), false);
-            currentContext = MovaType.DECIMAL;
         }
+        typeStack.pop();
+        typeStack.add(MovaType.DECIMAL);
+        // swap back in the original order:
+        if (left) swap();
     }
 
-    public void switchContextToInteger() {
-        if (currentContext == MovaType.DECIMAL) {
+    public void convertToInteger(boolean left, MovaType fromType) {
+        // swap to be able to convert the element before the last one
+        if (left) swap();
+        if (fromType == MovaType.DECIMAL) {
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
                     "ceil", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
                             Type.DOUBLE_TYPE.getDescriptor(), false);
             mv.visitInsn(Opcodes.D2I);
-            currentContext = MovaType.INTEGER;
         }
+        typeStack.pop();
+        typeStack.add(MovaType.INTEGER);
+        // swap to be able to convert the element before the last one
+        if (left) swap();
     }
 
-    private void switchContextToString() {
-        if (currentContext == MovaType.INTEGER) {
+    public void convertLastTypeToInteger() {
+        convertToInteger(false, typeStack.lastElement());
+    }
+
+    public void convertToString(boolean left, MovaType fromType) {
+        // swap to be able to convert the element before the last one
+        if (left) swap();
+        if (fromType == MovaType.INTEGER) {
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String",
                     "valueOf", "(" + Type.INT_TYPE.getDescriptor() + ")" +
                             Type.getDescriptor(String.class), false);
-        } else if (currentContext == MovaType.DECIMAL) {
+        } else if (fromType == MovaType.DECIMAL) {
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String",
                     "valueOf", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
                             Type.getDescriptor(String.class), false);
         }
-        currentContext = MovaType.STRING;
-    }
-
-    public void lockContext() {
-        contextLocked = true;
+        typeStack.pop();
+        typeStack.add(MovaType.STRING);
+        // swap to be able to convert the element before the last one
+        if (left) swap();
     }
 
     private String getContextDescriptor() {
-        return Optional.ofNullable(currentContext).map(context -> {
+        return Optional.ofNullable(typeStack.lastElement()).map(context -> {
             switch (context) {
                 case INTEGER: return Type.INT_TYPE.getDescriptor();
                 case DECIMAL: return Type.DOUBLE_TYPE.getDescriptor();
@@ -111,6 +107,7 @@ public class SmartByteCodeGenerator {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitLdcInsn(argIndex);
         mv.visitInsn(Opcodes.AALOAD);
+        typeStack.add(MovaType.STRING);
     }
 
     /***
@@ -119,7 +116,7 @@ public class SmartByteCodeGenerator {
      */
     public void addVariableAssignment(String identifier) {
         int opcode;
-        switch (currentContext) {
+        switch (typeStack.lastElement()) {
             case STRING: opcode = Opcodes.ASTORE;
             break;
             case DECIMAL: opcode = Opcodes.DSTORE;
@@ -130,39 +127,65 @@ public class SmartByteCodeGenerator {
         Optional<RegistryVariable> existingVariable = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
         if (existingVariable.isPresent()) {
             mv.visitVarInsn(opcode, existingVariable.get().getId());
+            // if the type has changed, we should update it in the registry:
+            if (!typeStack.lastElement().equals(existingVariable.get().getType())) {
+                byteCodeVariableRegistry.replace(identifier, existingVariable.get(),
+                        new RegistryVariable(existingVariable.get().getId(), typeStack.lastElement()));
+            }
         } else {
             mv.visitVarInsn(opcode, variableIndex);
-            byteCodeVariableRegistry.put(identifier, new RegistryVariable(variableIndex, currentContext));
+            byteCodeVariableRegistry.put(identifier, new RegistryVariable(variableIndex, typeStack.lastElement()));
             variableIndex++;
             // double takes 2 slots:
-            if (currentContext == MovaType.DECIMAL) {
+            if (typeStack.lastElement() == MovaType.DECIMAL) {
                 variableIndex++;
             }
         }
+        typeStack.pop();
     }
 
     public void printlnValueOnTopOfOpStack() {
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System","out", Type.getType(PrintStream.class).getDescriptor());
         // bring the value we want to print back on the top of stack:
+        typeStack.add(MovaType.OTHER);
         swap();
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
                 String.format("(%s)V", getContextDescriptor()), false);
+        typeStack.pop();
+        typeStack.pop();
     }
 
+    // todo rewrite this:
     private void swap() {
         // depending on type it is 1 or 2 slots.
-        if (currentContext == MovaType.DECIMAL) {
-            mv.visitInsn(Opcodes.DUP_X2);
-            mv.visitInsn(Opcodes.POP);
+        MovaType lastType = typeStack.lastElement();
+        MovaType secondType = typeStack.size() > 1 ? typeStack.get(typeStack.size() - 2) : null;
+
+        if (secondType == MovaType.DECIMAL) {
+            if (lastType == MovaType.DECIMAL) {
+                mv.visitInsn(Opcodes.DUP2_X2);
+                mv.visitInsn(Opcodes.POP2);
+            } else {
+                mv.visitInsn(Opcodes.DUP_X2);
+                mv.visitInsn(Opcodes.POP);
+            }
+        } else if (lastType == MovaType.DECIMAL) {
+            mv.visitInsn(Opcodes.DUP2_X1);
+            mv.visitInsn(Opcodes.POP2);
         } else {
             mv.visitInsn(Opcodes.SWAP);
         }
+        MovaType first = typeStack.pop();
+        MovaType second = typeStack.pop();
+        typeStack.add(first);
+        typeStack.add(second);
+
     }
 
     public void loadVariableToOpStack(String identifier) {
         Optional<RegistryVariable> registryVariableOption = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
         registryVariableOption.ifPresent(registryVariable -> {
-            processContext(registryVariable.getType());
+            typeStack.add(registryVariable.getType());
             int opcodes;
             switch (registryVariable.getType()) {
                 case INTEGER: opcodes = Opcodes.ILOAD;
@@ -176,14 +199,14 @@ public class SmartByteCodeGenerator {
         });
         if (registryVariableOption.isEmpty()) {
             // if there is no such variable then load the identifier itself in the stack:
-            processContext(MovaType.STRING);
+            typeStack.add(MovaType.STRING);
             mv.visitLdcInsn(identifier);
         }
     }
 
     public void pushValueToOpStack(MovaValue value) {
-        processContext(value.getMovaType());
-        switch (currentContext) {
+        typeStack.add(value.getMovaType());
+        switch (typeStack.lastElement()) {
             case STRING: mv.visitLdcInsn(value.getStringValue());
             break;
             case DECIMAL: mv.visitLdcInsn(value.getDoubleValue());
@@ -247,41 +270,62 @@ public class SmartByteCodeGenerator {
                 Type.getDescriptor(String.class),false);
     }
 
-    /***
-     * Perform mathematical operation against two last values on top of operand stack.
-     * To support decimal and string operations without unexpected issues:
-     * <li>between storing first and second value on top of the operand stack, method {@link #lockContext()} must be called;</li>
-     * <li>the values should be stored to the operand stack only using {@link SmartByteCodeGenerator} API.</li>
-     * @param action mathematical or string operation to be performed against two last values on the stack.
-     */
     public void performBytecodeOperation(MovaAction action) {
-        contextLocked = false;
+        MovaType rightType = typeStack.lastElement();
+        MovaType leftType = typeStack.get(typeStack.size() - 2);
+
+        if (action.equals(MovaAction.PREFIX) || action.equals(MovaAction.SUFFIX) || action.equals(MovaAction.WITH)) {
+            if (!leftType.equals(MovaType.STRING)) {
+                convertToString(true, leftType);
+            }
+            if (!rightType.equals(MovaType.STRING)) {
+                convertToString(false, rightType);
+            }
+            concatenate(action == MovaAction.PREFIX);
+            typeStack.pop();
+            typeStack.pop();
+            typeStack.add(MovaType.STRING);
+        } else {
+            MovaType actionType;
+
+            if (rightType.equals(MovaType.DECIMAL) && !leftType.equals(MovaType.DECIMAL)) {
+                convertToDecimal(true, leftType);
+                actionType = MovaType.DECIMAL;
+            } else if (leftType.equals(MovaType.DECIMAL) && !rightType.equals(MovaType.DECIMAL)) {
+                convertToDecimal(false, rightType);
+                actionType = MovaType.DECIMAL;
+            } else if (rightType.equals(MovaType.STRING) && leftType.equals(MovaType.INTEGER)) {
+                convertToInteger(false, rightType);
+                actionType = MovaType.INTEGER;
+            } else if (leftType.equals(MovaType.STRING) && rightType.equals(MovaType.INTEGER)) {
+                convertToInteger(true, leftType);
+                actionType = MovaType.INTEGER;
+            } else actionType = leftType;
+            doArithmeticOperation(actionType, action);
+            typeStack.pop();
+            typeStack.pop();
+            typeStack.add(actionType);
+        }
+    }
+
+    private void doArithmeticOperation(MovaType context, MovaAction action) {
         switch (action) {
             case PLUS:
-                if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IADD);
-                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DADD);
-                else switchContextToDecimal();
+                if (context == MovaType.INTEGER) mv.visitInsn(Opcodes.IADD);
+                else if (context == MovaType.DECIMAL) mv.visitInsn(Opcodes.DADD);
                 break;
             case MINUS:
-                if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.ISUB);
-                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DSUB);
-                else switchContextToDecimal();
+                if (context == MovaType.INTEGER) mv.visitInsn(Opcodes.ISUB);
+                else if (context == MovaType.DECIMAL) mv.visitInsn(Opcodes.DSUB);
                 break;
             case MULTIPLY:
-                if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IMUL);
-                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DMUL);
-                else switchContextToDecimal();
+                if (context == MovaType.INTEGER) mv.visitInsn(Opcodes.IMUL);
+                else if (context == MovaType.DECIMAL) mv.visitInsn(Opcodes.DMUL);
                 break;
             case DIVIDE:
-                if (currentContext == MovaType.INTEGER) mv.visitInsn(Opcodes.IDIV);
-                else if (currentContext == MovaType.DECIMAL) mv.visitInsn(Opcodes.DDIV);
-                else switchContextToDecimal();
+                if (context == MovaType.INTEGER) mv.visitInsn(Opcodes.IDIV);
+                else if (context == MovaType.DECIMAL) mv.visitInsn(Opcodes.DDIV);
                 break;
-            case PREFIX: concatenate(true);
-                break;
-            case SUFFIX:
-            case WITH:
-            default: concatenate(false);
         }
     }
 
@@ -299,7 +343,7 @@ public class SmartByteCodeGenerator {
     public void compareTwoThings(String comparisonKeyword, boolean negated) {
         int opcodeCondition;
         performBytecodeOperation(MovaAction.MINUS);
-        switchContextToInteger();
+        convertLastTypeToInteger();
         switch (comparisonKeyword) {
             case "LESSTHAN":
                 opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;

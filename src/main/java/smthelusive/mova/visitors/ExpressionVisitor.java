@@ -35,25 +35,14 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
             // normal expression 0 = value, 1 = action, 2 = value:
             else {
                 visit(ctx.getChild(0));
+                visit(ctx.getChild(2));
                 TerminalNode actionNode = (TerminalNode)ctx.getChild(1);
                 MovaAction action = OperationsUtil.convertedAction(
                         MovaParser.VOCABULARY.getSymbolicName((actionNode.getSymbol().getType())));
-                boolean isArithmeticAction = isArithmeticAction(action);
-                if (isArithmeticAction) smartBytecodeGenerator.switchContextToDecimal();
-                smartBytecodeGenerator.lockContext();
-                visit(ctx.getChild(2));
-//                if (isArithmeticAction) smartBytecodeGenerator.switchContextToDecimal();
                 smartBytecodeGenerator.performBytecodeOperation(action);
             }
         }
         return null;
-    }
-
-    private boolean isArithmeticAction(MovaAction action) {
-        return action.equals(MovaAction.MINUS) ||
-                action.equals(MovaAction.PLUS) ||
-                action.equals(MovaAction.MULTIPLY) ||
-                action.equals(MovaAction.DIVIDE);
     }
 
     @Override

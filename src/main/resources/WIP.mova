@@ -1,0 +1,6 @@
+// todo if "aaa" equals "bbb" ...
+// todo if "aaa" contains "bbb" ...
+// idea for demo live coding: string reverse: new StringBuilder(string).reverse().toString()
+
+// todo this still doesn't work:
+show arg0 + arg1.

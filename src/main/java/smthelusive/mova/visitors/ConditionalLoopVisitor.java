@@ -39,9 +39,6 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
                 smartByteCodeGenerator.bitwiseAnd();
             } else if (ctx.allKindsExpression().size() == 2) { // allKindsExpression ? allkindsExpression
                 expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression(0));
-                // lock context because for comparison we are subtracting one value from the other
-                // for any expression the context should be locked so the types are correctly derived
-                smartByteCodeGenerator.lockContext();
                 expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression(1));
 
                 int amountOfNegations = ctx.NOT().size();
@@ -68,7 +65,7 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     public Void visitLoop(MovaParser.LoopContext ctx) {
         if (ctx.allKindsExpression() != null) {
             expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression());
-            smartByteCodeGenerator.switchContextToInteger();
+            smartByteCodeGenerator.convertLastTypeToInteger();
             String movaInternalVarIdentifier = SmartCompiler.getNewMovaInternalVariableIdentifier();
             smartByteCodeGenerator.addVariableAssignment(movaInternalVarIdentifier);
             smartByteCodeGenerator.expressionBasedLoop(movaProgramVisitor::visitValidStructure,

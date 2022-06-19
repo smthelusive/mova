@@ -8,7 +8,7 @@ import smthelusive.mova.visitors.MovaProgramVisitor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.Arrays;
 
 /***
  *  Compiler does the following:
@@ -27,7 +27,7 @@ public class SmartCompiler {
     }
 
     public static void main(String[] args) {
-        Optional.ofNullable(args[0]).ifPresent(inputFile -> {
+        Arrays.stream(args).forEach(inputFile -> {
             try {
                 MovaLexer lexer = new MovaLexer(CharStreams.fromFileName(inputFile));
                 MovaParser parser = new MovaParser(new CommonTokenStream(lexer));
