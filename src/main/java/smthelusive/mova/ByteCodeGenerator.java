@@ -88,7 +88,7 @@ public class ByteCodeGenerator {
     }
 
     private MovaType getPreLastElementOfStack() {
-        return typeStack.get(typeStack.size() - 2);
+        return typeStack.size() > 1 ? typeStack.get(typeStack.size() - 2) : null;
     }
 
     private boolean someOperandIsString() {
@@ -178,8 +178,7 @@ public class ByteCodeGenerator {
 
     private void swap() {
         MovaType lastType = typeStack.lastElement();
-        int stackSize = typeStack.size();
-        MovaType secondType = stackSize > 1 ? getPreLastElementOfStack() : null;
+        MovaType secondType = getPreLastElementOfStack();
 
         if (MovaType.DECIMAL.equals(secondType) && MovaType.DECIMAL.equals(lastType)) {
             swapTwoSlotsWithTwoSlots();
