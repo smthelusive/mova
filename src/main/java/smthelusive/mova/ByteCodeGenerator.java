@@ -10,6 +10,7 @@ import smthelusive.mova.gen.MovaParser;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class ByteCodeGenerator {
 
@@ -79,6 +80,20 @@ public class ByteCodeGenerator {
         changeLastTypeOnLocalStackTo(MovaType.STRING);
         // swap to be able to convert the element before the last one
         if (left) swap();
+    }
+
+    private void convertToString(boolean left) {
+        MovaType fromType = left ? getPreLastElementOfStack() : typeStack.lastElement();
+        convertToString(left, fromType);
+    }
+
+    private MovaType getPreLastElementOfStack() {
+        return typeStack.get(typeStack.size() - 2);
+    }
+
+    private boolean someOperandIsString() {
+        return getPreLastElementOfStack().equals(MovaType.STRING) ||
+                typeStack.lastElement().equals(MovaType.STRING);
     }
 
     private String getLastTypeDescriptor() {
@@ -164,7 +179,7 @@ public class ByteCodeGenerator {
     private void swap() {
         MovaType lastType = typeStack.lastElement();
         int stackSize = typeStack.size();
-        MovaType secondType = stackSize > 1 ? typeStack.get(stackSize - 2) : null;
+        MovaType secondType = stackSize > 1 ? getPreLastElementOfStack() : null;
 
         if (MovaType.DECIMAL.equals(secondType) && MovaType.DECIMAL.equals(lastType)) {
             swapTwoSlotsWithTwoSlots();
@@ -302,7 +317,7 @@ public class ByteCodeGenerator {
 
     public void performBytecodeOperation(MovaAction action) {
         MovaType rightType = typeStack.lastElement();
-        MovaType leftType = typeStack.get(typeStack.size() - 2);
+        MovaType leftType = getPreLastElementOfStack();
 
         if (action.equals(MovaAction.PREFIX) || action.equals(MovaAction.SUFFIX) || action.equals(MovaAction.WITH)) {
             if (!leftType.equals(MovaType.STRING)) {
@@ -363,6 +378,7 @@ public class ByteCodeGenerator {
     }
 
     /***
+     * todo update for contains
      * In order to compare two last values on the stack, it performs a subtracting operation
      * taking into account the context being integer or decimal.
      * If the difference is resulted to be in the decimal context, it is rounded up into integer
@@ -374,30 +390,36 @@ public class ByteCodeGenerator {
      * @param negated if true, the condition is the opposite
      */
     public void compareTwoThings(String comparisonKeyword, boolean negated) {
-        int opcodeCondition;
-        performBytecodeOperation(MovaAction.MINUS);
-        convertLastTypeToInteger();
-        switch (comparisonKeyword) {
-            case "LESSTHAN":
-                opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;
-                break;
-            case "LESSOREQUAL":
-                opcodeCondition = negated ? Opcodes.IFGT : Opcodes.IFLE;
-                break;
-            case "GREATERTHAN":
-                opcodeCondition = negated ? Opcodes.IFLE : Opcodes.IFGT;
-                break;
-            case "GREATEROREQUAL":
-                opcodeCondition = negated ? Opcodes.IFLT : Opcodes.IFGE;
-                break;
-            case "NOTEQUAL":
-                opcodeCondition = negated ? Opcodes.IFEQ : Opcodes.IFNE;
-                break;
-            case "EQUALS":
-            default:
-                opcodeCondition = negated ? Opcodes.IFNE : Opcodes.IFEQ;
+        if ("CONTAINS".equals(comparisonKeyword)) {
+            storeBooleanStringContainsSubstring(negated);
+        } else if (someOperandIsString() && "EQUALS".equals(comparisonKeyword)) {
+            storeBooleanOnEqualStrings(negated);
+        } else {
+            int opcodeCondition;
+            performBytecodeOperation(MovaAction.MINUS);
+            convertLastTypeToInteger();
+            switch (comparisonKeyword) {
+                case "LESSTHAN":
+                    opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;
+                    break;
+                case "LESSOREQUAL":
+                    opcodeCondition = negated ? Opcodes.IFGT : Opcodes.IFLE;
+                    break;
+                case "GREATERTHAN":
+                    opcodeCondition = negated ? Opcodes.IFLE : Opcodes.IFGT;
+                    break;
+                case "GREATEROREQUAL":
+                    opcodeCondition = negated ? Opcodes.IFLT : Opcodes.IFGE;
+                    break;
+                case "NOTEQUAL":
+                    opcodeCondition = negated ? Opcodes.IFEQ : Opcodes.IFNE;
+                    break;
+                case "EQUALS":
+                default:
+                    opcodeCondition = negated ? Opcodes.IFNE : Opcodes.IFEQ;
+            }
+            storeBooleanOnCondition(opcodeCondition);
         }
-        storeBooleanOnCondition(opcodeCondition);
     }
 
     /***
@@ -422,6 +444,22 @@ public class ByteCodeGenerator {
         pushValueToOpStack(new MovaValue(MovaType.INTEGER, ZERO));
         mv.visitJumpInsn(Opcodes.GOTO, conditionEnd);
         mv.visitLabel(conditionEnd);
+    }
+
+    // todo docs
+    public void storeBooleanStringContainsSubstring(boolean negated) {
+        Stream.of(true, false).forEach(this::convertToString);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String","contains", "(" +
+                Type.getDescriptor(CharSequence.class) + ")" + Type.BOOLEAN_TYPE.getDescriptor(),false);
+        storeBooleanOnCondition(negated ? Opcodes.IFLE : Opcodes.IFGT);
+    }
+
+    // todo test and docs
+    public void storeBooleanOnEqualStrings(boolean negated) {
+        Stream.of(true, false).forEach(this::convertToString);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String","equals", "(" +
+                Type.getDescriptor(Object.class) + ")" + Type.BOOLEAN_TYPE.getDescriptor(),false);
+        storeBooleanOnCondition(negated ? Opcodes.IFLE : Opcodes.IFGT);
     }
 
     /***

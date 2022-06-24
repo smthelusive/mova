@@ -39,6 +39,7 @@ LESSTHAN           : '<' | 'less than' | 'less' ;
 GREATEROREQUAL     : '>=' | 'more or equal to' | 'more or equal' | 'greater or equal to' | 'greater or equal' ;
 LESSOREQUAL        : '<=' | 'less or equal to' | 'less or equal' ;
 NOTEQUAL           : '!=' | 'not equal to' | 'not equal' ;
+CONTAINS           : 'contains' ;
 
 fragment DIGIT     : [0-9] ;
 fragment SYMBOL    : [A-Za-z0-9_] ;
