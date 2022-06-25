@@ -1,9 +1,7 @@
-//show arg0 + 12.
-//a is 1 also b is a + 12.
-//show b suffix mova.
+// demo live coding: string reverse: new StringBuilder(string).reverse().toString()
+// todo tests
 
-//do 5 times show b suffix mova also increment a also increment a also show b with a.
-show arg0 with arg1.
-show arg0 + 1,2.
-if 3 > 7 show nothing.
-Слава Україні!.
+// a is reverse test.
+// show a.
+// reverse a.
+// show a.

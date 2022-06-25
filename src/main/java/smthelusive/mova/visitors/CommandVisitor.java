@@ -41,6 +41,13 @@ public class CommandVisitor extends MovaParserBaseVisitor<Void> {
     }
 
     @Override
+    public Void visitReverse(MovaParser.ReverseContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        byteCodeGenerator.reverseVariableValue(identifier);
+        return null;
+    }
+
+    @Override
     public Void visitIncrement(MovaParser.IncrementContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
         byteCodeGenerator.incrementVariable(identifier);

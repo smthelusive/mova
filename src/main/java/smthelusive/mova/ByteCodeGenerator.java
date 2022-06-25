@@ -242,6 +242,30 @@ public class ByteCodeGenerator {
         }
     }
 
+    // todo javadocs
+    public void reverseLastStackValue() {
+        convertToString(false);
+        String stringBuilderPath = "java/lang/StringBuilder";
+
+        mv.visitTypeInsn(Opcodes.NEW, stringBuilderPath);
+        mv.visitInsn(Opcodes.DUP);
+        swapTwoSlotsWithOneSlot();
+
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, stringBuilderPath,"<init>",
+                "(" + Type.getDescriptor(String.class) + ")V",false);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder","reverse", "()" +
+                Type.getDescriptor(StringBuilder.class),false);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, stringBuilderPath, "toString","()" +
+            Type.getDescriptor(String.class),false);
+    }
+
+    // todo javadocs
+    public void reverseVariableValue(String identifier) {
+        loadVariableToOpStack(identifier);
+        reverseLastStackValue();
+        addVariableAssignment(identifier);
+    }
+
     /***
      * pushes 1 onto the stack, and applies the sum operation
      *    then it stores the value in the new variable with the same identifier
