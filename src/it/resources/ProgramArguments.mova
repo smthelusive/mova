@@ -1,2 +1,18 @@
 show arg0 with " " with arg1.
 show arg0 + arg1.
+show arg0 with 9,2.
+show arg1 plus 9,2.
+tmp = arg0 with 9,2.
+show tmp.
+tmp2 = 9,2 + arg1.
+show tmp2.
+show 9,2 + arg1.
+tmp3 = 9,2 with arg1.
+show tmp3.
+show 9,2 with arg1.
+do until tmp2 > 15 tmp2++ also show tmp2.
+show tmp2 + 1.
+show 9 + arg1.
+show arg1 + 9.
+smt = arg1 + 9 also show smt.
+if 1 < arg1 show correct.

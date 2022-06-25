@@ -79,6 +79,18 @@ public class ByteCodeGenerator {
         if (left) swap();
     }
 
+    /***
+     * only used internally for processing conditions
+     */
+    private void signum() {
+        if (!MovaType.DECIMAL.equals(typeStack.lastElement())) return;
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Math",
+                "signum", "(" + Type.DOUBLE_TYPE.getDescriptor() + ")" +
+                        Type.DOUBLE_TYPE.getDescriptor(), false);
+        mv.visitInsn(Opcodes.D2I);
+        changeLastTypeOnLocalStackTo(MovaType.INTEGER);
+    }
+
     public void convertToString(boolean left) {
         MovaType fromType = left ? getLeftElementOfStack() : typeStack.lastElement();
         if (!MovaType.INTEGER.equals(fromType) && !MovaType.DECIMAL.equals(fromType)) return;
@@ -344,12 +356,11 @@ public class ByteCodeGenerator {
             } else if (MovaType.DECIMAL.equals(leftType) && !MovaType.DECIMAL.equals(rightType)) {
                 convertToDecimal(false);
                 actionType = MovaType.DECIMAL;
-            } else if (MovaType.STRING.equals(rightType) && MovaType.INTEGER.equals(leftType)) {
-                convertToInteger(false);
-                actionType = MovaType.INTEGER;
-            } else if (MovaType.STRING.equals(leftType) && MovaType.INTEGER.equals(rightType)) {
-                convertToInteger(true);
-                actionType = MovaType.INTEGER;
+            } else if ((MovaType.STRING.equals(rightType) && MovaType.INTEGER.equals(leftType)) ||
+                    (MovaType.STRING.equals(leftType) && MovaType.INTEGER.equals(rightType))) {
+                convertToDecimal(false);
+                convertToDecimal(true);
+                actionType = MovaType.DECIMAL;
             } else if (MovaType.STRING.equals(leftType) && MovaType.STRING.equals(rightType)) {
                 convertToDecimal(true);
                 convertToDecimal(false);
@@ -403,7 +414,7 @@ public class ByteCodeGenerator {
         } else {
             int opcodeCondition;
             performBytecodeOperation(MovaAction.MINUS);
-            convertToInteger(false);
+            signum();
             switch (comparisonKeyword) {
                 case "LESSTHAN":
                     opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;

@@ -97,7 +97,8 @@ class MovaProgramSpec extends Specification {
                 "super awesome\n" +
                 "great!\n" +
                 "yes :)\n" +
-                "correct!\n")
+                "correct!\n" +
+                "right\n")
     }
 
     def "string expressions"() {
@@ -145,6 +146,7 @@ class MovaProgramSpec extends Specification {
                 "4\n" +
                 "5\n" +
                 "6\n" +
+                "7\n" +
                 "five times\n" +
                 "five times\n" +
                 "five times\n" +
@@ -164,6 +166,33 @@ class MovaProgramSpec extends Specification {
         then:
         result.toString() equals(
                 "15 2,8\n" +
-                "17.8\n")
+                "17.8\n" +
+                "159.2\n" +
+                "12.0\n" +
+                "159.2\n" +
+                "12.0\n" +
+                "12.0\n" +
+                "9.22,8\n" +
+                "9.22,8\n" +
+                "13.0\n" +
+                "14.0\n" +
+                "15.0\n" +
+                "16.0\n" +
+                "17.0\n" +
+                "11.8\n" +
+                "11.8\n" +
+                "11.8\n" +
+                "correct\n")
+    }
+
+    def "reverse string"() {
+        when:
+        def result = runProgram("ReverseString")
+
+        then:
+        result.toString() equals(
+                "tset\n" +
+                "test\n" +
+                "20.1\n")
     }
 }

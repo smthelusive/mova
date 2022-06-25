@@ -13,3 +13,4 @@ if 0,5 + 1 > 1,499 show "yes :)".
 if 0,5 + 1 > 1,5 show "no".
 if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 - 2 show "correct!".
 if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 + 2 show "incorrect!".
+if 1 < 1,1 show right.
