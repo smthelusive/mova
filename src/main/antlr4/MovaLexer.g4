@@ -29,6 +29,7 @@ NOT                : 'not' | '!' ;
 
 INCREMENT          : 'increment' | 'incremented' | '++' ;
 DECREMENT          : 'decrement' | 'decremented' | '--' ;
+REVERSE            : 'reverse' | 'reversed' ;
 
 COMMA              : ',' ;
 ALSO               : ';' | 'also' ;

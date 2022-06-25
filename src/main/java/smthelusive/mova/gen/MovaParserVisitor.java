@@ -35,6 +35,12 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIncrement(MovaParser.IncrementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MovaParser#reverse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReverse(MovaParser.ReverseContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MovaParser#allKindsExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

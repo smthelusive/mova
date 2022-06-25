@@ -97,6 +97,7 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
         Optional.ofNullable(ctx.expression()).ifPresent(this::visitExpression);
         Optional.ofNullable(ctx.increment()).ifPresent(this::visitIncrementForReuse);
         Optional.ofNullable(ctx.decrement()).ifPresent(this::visitDecrementForReuse);
+        Optional.ofNullable(ctx.reverse()).ifPresent(this::visitReverseForReuse);
         return null;
     }
 
@@ -119,6 +120,12 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
     public void visitIncrementForReuse(MovaParser.IncrementContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
         bytecodeGenerator.incrementVariable(identifier);
+        bytecodeGenerator.loadVariableToOpStack(identifier);
+    }
+
+    public void visitReverseForReuse(MovaParser.ReverseContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        bytecodeGenerator.reverseVariableValue(identifier);
         bytecodeGenerator.loadVariableToOpStack(identifier);
     }
 }

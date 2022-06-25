@@ -11,14 +11,15 @@ expression : expression (MULTIPLY | DIVIDE) expression
             | value;
 decrement: DECREMENT IDENTIFIER | IDENTIFIER DECREMENT;
 increment: INCREMENT IDENTIFIER | IDENTIFIER INCREMENT;
-allKindsExpression: (expression | increment | decrement);
+reverse: REVERSE (IDENTIFIER | STRING) | (IDENTIFIER | STRING) REVERSE;
+allKindsExpression: (expression | increment | decrement | reverse);
 
 assignment: IDENTIFIER EQUALS allKindsExpression;
 output: SHOW allKindsExpression;
 
 slavaUkraini: SLAVAUKRAINI;
 
-command: (assignment | decrement | increment | output);
+command: (assignment | decrement | increment | reverse | output);
 
 condition : condition (AND | OR) condition
             | LPAREN condition RPAREN

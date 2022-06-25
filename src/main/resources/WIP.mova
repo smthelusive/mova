@@ -1,1 +1,7 @@
-// idea for demo live coding: string reverse: new StringBuilder(string).reverse().toString()
+// demo live coding: string reverse: new StringBuilder(string).reverse().toString()
+// todo tests
+
+// a is reverse test.
+// show a.
+// reverse a.
+// show a.
