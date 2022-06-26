@@ -1,0 +1,13 @@
+string is "this is a test".
+show string.
+show "lalal\"a".
+show a with "another test".
+show world prefixed with "hello " prefixed with "wow, ".
+left is "hello ".
+right is "world".
+show left prefixed with right.
+show 1 with "1".
+show "fdsgasd" with 1,55.
+show 6456,32 prefixed with "-".
+show eee suffix rrr prefixed with left.
+show eee suffix (rrr prefixed with left).

@@ -1,0 +1,11 @@
+a is 0.
+repeat until a is 6,7
+increment a also show a.
+
+do 5 times:
+show "five times".
+
+repeat 7 - 5 times
+show two.
+
+do show "three" 2,9 times.

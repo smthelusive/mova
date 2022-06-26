@@ -1,0 +1,21 @@
+if 2 > 1: show correct.
+if 2 < 1: show incorrect.
+if 2 < 5 and 2 > 3: show incorrect.
+if 2 < 5 or 2 > 3 and 2 < 3: show correct.
+if not 2 not = 2 show correct.
+if not 2 = 2: show incorrect.
+if (5 > 2 and (5 < 7 or 2 > 10)) or (2 > 5 and 1 > 5): show "it works 1" also show "it works 2".
+if (5 > 2 and (5 not > 7 or 2 > 10)) or (2 > 5 and 1 > 5): show "it works 3" also show "it works 4".
+if 1 if 1 show "correct".
+if 1 show correct also if 1 show "correct".
+if 1 if -1 show "incorrect".
+if 1 if 0 show "incorrect".
+if 0 if 1 show "incorrect".
+c is 5.
+if c > 3 if c > 4 if c < 2 show c.
+
+if 1 + 5 = 6 show "awesome".
+if 1 = 1 then show yes else show no.
+if 1 > 1 then show no otherwise show yes.
+if 5 > 3 if 4 < 1 show "wrong" else show "right".
+if 5 > 6 show no else if 6 > 7 show nono else show yess.

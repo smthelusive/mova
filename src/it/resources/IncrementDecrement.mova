@@ -1,0 +1,28 @@
+a is 0.
+s is 0.
+increment s.
+show s.
+decrement s.
+show s.
+++ a.
+show a.
+-- a.
+show a.
+a++.
+show a.
+a increment.
+show a.
+a decrement.
+show a.
+a --.
+show a.
+
+test is 118 + 5.
+show test --.
+show decrement test.
+test2 is test++.
+show test2 increment.
+
+dec is 1,34.
+show dec++.
+show dec incremented.

@@ -1,0 +1,15 @@
+dec equals 1,56.
+show dec.
+
+dec is (0,5 plus 1) multiply by 0,89 divide by 2.
+a equals dec.
+show dec.
+show a.
+b is a plus 22.
+show b plus 1.
+show dec.
+a is 1.
+show a.
+
+s = 1 + 2,1 - (6 + 5) + (3,5 + 14 - 4,5) - 18.
+show s.

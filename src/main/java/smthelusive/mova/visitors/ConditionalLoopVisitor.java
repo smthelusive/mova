@@ -65,7 +65,7 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
     public Void visitLoop(MovaParser.LoopContext ctx) {
         if (ctx.allKindsExpression() != null) {
             expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression());
-            byteCodeGenerator.convertLastTypeToInteger();
+            byteCodeGenerator.convertToInteger(false);
             String movaInternalVarIdentifier = Compiler.getNewMovaInternalVariableIdentifier();
             byteCodeGenerator.addVariableAssignment(movaInternalVarIdentifier);
             byteCodeGenerator.expressionBasedLoop(movaProgramVisitor::visitValidStructure,

@@ -22,13 +22,15 @@ public class ByteCodeGenerator {
     private MethodVisitor mv;
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
 
-    public void convertToDecimal(boolean left, MovaType fromType) {
+    public void convertToDecimal(boolean left) {
+        MovaType fromType = left ? getLeftElementOfStack() : typeStack.lastElement();
         if (!MovaType.STRING.equals(fromType) && !MovaType.INTEGER.equals(fromType)) return;
         // swap to be able to convert the element before the last one
         if (left) swap();
         switch (fromType) {
             case INTEGER:
                 mv.visitInsn(Opcodes.I2D);
+                changeLastTypeOnLocalStackTo(MovaType.DECIMAL);
                 break;
             case STRING:
             default:
@@ -51,7 +53,8 @@ public class ByteCodeGenerator {
         }
     }
 
-    private void convertToInteger(boolean left, MovaType fromType) {
+    public void convertToInteger(boolean left) {
+        MovaType fromType = left ? getLeftElementOfStack() : typeStack.lastElement();
         if (!MovaType.DECIMAL.equals(fromType)) return;
         // swap to be able to convert the element before the last one
         if (left) swap();
@@ -64,11 +67,8 @@ public class ByteCodeGenerator {
         if (left) swap();
     }
 
-    public void convertLastTypeToInteger() {
-        convertToInteger(false, typeStack.lastElement());
-    }
-
-    public void convertToString(boolean left, MovaType fromType) {
+    public void convertToString(boolean left) {
+        MovaType fromType = left ? getLeftElementOfStack() : typeStack.lastElement();
         if (!MovaType.INTEGER.equals(fromType) && !MovaType.DECIMAL.equals(fromType)) return;
         // swap to be able to convert the element before the last one
         if (left) swap();
@@ -82,17 +82,12 @@ public class ByteCodeGenerator {
         if (left) swap();
     }
 
-    private void convertToString(boolean left) {
-        MovaType fromType = left ? getPreLastElementOfStack() : typeStack.lastElement();
-        convertToString(left, fromType);
-    }
-
-    private MovaType getPreLastElementOfStack() {
+    private MovaType getLeftElementOfStack() {
         return typeStack.size() > 1 ? typeStack.get(typeStack.size() - 2) : null;
     }
 
     private boolean someOperandIsString() {
-        return getPreLastElementOfStack().equals(MovaType.STRING) ||
+        return getLeftElementOfStack().equals(MovaType.STRING) ||
                 typeStack.lastElement().equals(MovaType.STRING);
     }
 
@@ -178,7 +173,7 @@ public class ByteCodeGenerator {
 
     private void swap() {
         MovaType lastType = typeStack.lastElement();
-        MovaType secondType = getPreLastElementOfStack();
+        MovaType secondType = getLeftElementOfStack();
 
         if (MovaType.DECIMAL.equals(secondType) && MovaType.DECIMAL.equals(lastType)) {
             swapTwoSlotsWithTwoSlots();
@@ -316,14 +311,14 @@ public class ByteCodeGenerator {
 
     public void performBytecodeOperation(MovaAction action) {
         MovaType rightType = typeStack.lastElement();
-        MovaType leftType = getPreLastElementOfStack();
+        MovaType leftType = getLeftElementOfStack();
 
-        if (action.equals(MovaAction.PREFIX) || action.equals(MovaAction.SUFFIX) || action.equals(MovaAction.WITH)) {
-            if (!leftType.equals(MovaType.STRING)) {
-                convertToString(true, leftType);
+        if (MovaAction.PREFIX.equals(action) || MovaAction.SUFFIX.equals(action) || MovaAction.WITH.equals(action)) {
+            if (!MovaType.STRING.equals(leftType)) {
+                convertToString(true);
             }
-            if (!rightType.equals(MovaType.STRING)) {
-                convertToString(false, rightType);
+            if (!MovaType.STRING.equals(rightType)) {
+                convertToString(false);
             }
             concatenate(action == MovaAction.PREFIX);
             popNValuesFromLocalStack(2);
@@ -331,21 +326,21 @@ public class ByteCodeGenerator {
         } else {
             MovaType actionType;
 
-            if (rightType.equals(MovaType.DECIMAL) && !leftType.equals(MovaType.DECIMAL)) {
-                convertToDecimal(true, leftType);
+            if (MovaType.DECIMAL.equals(rightType) && !MovaType.DECIMAL.equals(leftType)) {
+                convertToDecimal(true);
                 actionType = MovaType.DECIMAL;
-            } else if (leftType.equals(MovaType.DECIMAL) && !rightType.equals(MovaType.DECIMAL)) {
-                convertToDecimal(false, rightType);
+            } else if (MovaType.DECIMAL.equals(leftType) && !MovaType.DECIMAL.equals(rightType)) {
+                convertToDecimal(false);
                 actionType = MovaType.DECIMAL;
-            } else if (rightType.equals(MovaType.STRING) && leftType.equals(MovaType.INTEGER)) {
-                convertToInteger(false, rightType);
+            } else if (MovaType.STRING.equals(rightType) && MovaType.INTEGER.equals(leftType)) {
+                convertToInteger(false);
                 actionType = MovaType.INTEGER;
-            } else if (leftType.equals(MovaType.STRING) && rightType.equals(MovaType.INTEGER)) {
-                convertToInteger(true, leftType);
+            } else if (MovaType.STRING.equals(leftType) && MovaType.INTEGER.equals(rightType)) {
+                convertToInteger(true);
                 actionType = MovaType.INTEGER;
-            } else if (leftType.equals(MovaType.STRING) && rightType.equals(MovaType.STRING)) {
-                convertToDecimal(true, leftType);
-                convertToDecimal(false, rightType);
+            } else if (MovaType.STRING.equals(leftType) && MovaType.STRING.equals(rightType)) {
+                convertToDecimal(true);
+                convertToDecimal(false);
                 actionType = MovaType.DECIMAL;
             } else actionType = leftType;
 
@@ -396,7 +391,7 @@ public class ByteCodeGenerator {
         } else {
             int opcodeCondition;
             performBytecodeOperation(MovaAction.MINUS);
-            convertLastTypeToInteger();
+            convertToInteger(false);
             switch (comparisonKeyword) {
                 case "LESSTHAN":
                     opcodeCondition = negated ? Opcodes.IFGE : Opcodes.IFLT;

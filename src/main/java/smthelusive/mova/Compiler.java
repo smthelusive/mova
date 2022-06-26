@@ -18,7 +18,6 @@ import java.util.Arrays;
  *  - writes the bytecode to a class file
  */
 public class Compiler {
-    public static final ByteCodeGenerator BYTE_CODE_GENERATOR = new ByteCodeGenerator();
     private final static String MOVA_VAR_RESERVED = "mova_var";
     private static int movaInternalVariableNumber = 0;
 
@@ -33,11 +32,12 @@ public class Compiler {
                 MovaParser parser = new MovaParser(new CommonTokenStream(lexer));
                 String[] filename = inputFile.split("/");
                 String programName = filename[filename.length - 1].replace(".mova", "");
-                BYTE_CODE_GENERATOR.init(programName);
-                MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(BYTE_CODE_GENERATOR);
+                ByteCodeGenerator byteCodeGenerator = new ByteCodeGenerator();
+                byteCodeGenerator.init(programName);
+                MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(byteCodeGenerator);
                 movaProgramVisitor.visit(parser.validProgram());
-                byte[] bytes = BYTE_CODE_GENERATOR.cleanCloseProgram();
-                FileOutputStream stream = new FileOutputStream(programName + ".class");
+                byte[] bytes = byteCodeGenerator.cleanCloseProgram();
+                FileOutputStream stream = new FileOutputStream(programName + ".class", false);
                 stream.write(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
