@@ -55,7 +55,7 @@ public class CommandVisitor extends MovaParserBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitSlavaUkraini(MovaParser.SlavaUkrainiContext ctx) {
+    public Void visitEasterEgg(MovaParser.EasterEggContext ctx) {
         byteCodeGenerator.pushValueToOpStack(new MovaValue(MovaType.STRING, HEROYAM_SLAVA));
         byteCodeGenerator.printlnValueOnTopOfOpStack();
         return null;

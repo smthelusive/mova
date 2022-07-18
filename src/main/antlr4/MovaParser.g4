@@ -17,7 +17,7 @@ allKindsExpression: (expression | increment | decrement | reverse);
 assignment: IDENTIFIER EQUALS allKindsExpression;
 output: SHOW allKindsExpression;
 
-slavaUkraini: SLAVAUKRAINI;
+easterEgg: SLAVAUKRAINI;
 
 command: (assignment | decrement | increment | reverse | output);
 
@@ -32,6 +32,6 @@ conditional: IF condition (THEN | COLON)? validStructure
 loop: (((DO | REPEAT) ((allKindsExpression TIMES) | (UNTIL condition)) COLON? validStructure) |
 ((DO | REPEAT) validStructure allKindsExpression TIMES));
 
-validStructure: (command | conditional | loop | slavaUkraini) (ALSO validStructure)* ;
+validStructure: (command | conditional | loop | easterEgg) (ALSO validStructure)* ;
 
 validProgram: (validStructure DOT)* EOF;

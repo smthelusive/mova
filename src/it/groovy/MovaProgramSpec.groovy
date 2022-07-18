@@ -195,4 +195,12 @@ class MovaProgramSpec extends Specification {
                 "test\n" +
                 "20.1\n")
     }
+
+    def "easter egg"() {
+        when:
+        def result = runProgram("EasterEgg")
+
+        then:
+        result.toString() equals("Героям Слава!\n")
+    }
 }

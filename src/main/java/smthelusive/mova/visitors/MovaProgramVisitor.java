@@ -31,7 +31,7 @@ public class MovaProgramVisitor extends MovaParserBaseVisitor<Void> {
         if (ctx.conditional() != null) conditionalLoopVisitor.visitConditional(ctx.conditional());
         if (ctx.loop() != null) conditionalLoopVisitor.visitLoop(ctx.loop());
         if (ctx.command() != null) commandVisitor.visitCommand(ctx.command());
-        if (ctx.slavaUkraini() != null) commandVisitor.visitSlavaUkraini(ctx.slavaUkraini());
+        if (ctx.easterEgg() != null) commandVisitor.visitEasterEgg(ctx.easterEgg());
         ctx.validStructure().forEach(this::visit);
         return null;
     }

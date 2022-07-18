@@ -59,11 +59,11 @@ public interface MovaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOutput(MovaParser.OutputContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MovaParser#slavaUkraini}.
+	 * Visit a parse tree produced by {@link MovaParser#easterEgg}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSlavaUkraini(MovaParser.SlavaUkrainiContext ctx);
+	T visitEasterEgg(MovaParser.EasterEggContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MovaParser#command}.
 	 * @param ctx the parse tree

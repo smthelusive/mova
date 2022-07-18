@@ -26,12 +26,12 @@ public class MovaParser extends Parser {
 	public static final int
 		RULE_value = 0, RULE_expression = 1, RULE_decrement = 2, RULE_increment = 3, 
 		RULE_reverse = 4, RULE_allKindsExpression = 5, RULE_assignment = 6, RULE_output = 7, 
-		RULE_slavaUkraini = 8, RULE_command = 9, RULE_condition = 10, RULE_conditional = 11, 
+		RULE_easterEgg = 8, RULE_command = 9, RULE_condition = 10, RULE_conditional = 11, 
 		RULE_loop = 12, RULE_validStructure = 13, RULE_validProgram = 14;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"value", "expression", "decrement", "increment", "reverse", "allKindsExpression", 
-			"assignment", "output", "slavaUkraini", "command", "condition", "conditional", 
+			"assignment", "output", "easterEgg", "command", "condition", "conditional", 
 			"loop", "validStructure", "validProgram"
 		};
 	}
@@ -118,14 +118,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_value; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterValue(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitValue(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitValue(this);
 			else return visitor.visitChildren(this);
@@ -184,14 +176,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expression; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitExpression(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitExpression(this);
@@ -341,14 +325,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_decrement; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterDecrement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitDecrement(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitDecrement(this);
 			else return visitor.visitChildren(this);
@@ -402,14 +378,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_increment; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterIncrement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitIncrement(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitIncrement(this);
@@ -548,14 +516,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_allKindsExpression; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterAllKindsExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitAllKindsExpression(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitAllKindsExpression(this);
 			else return visitor.visitChildren(this);
@@ -620,14 +580,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_assignment; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterAssignment(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitAssignment(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitAssignment(this);
 			else return visitor.visitChildren(this);
@@ -669,14 +621,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_output; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterOutput(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitOutput(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitOutput(this);
 			else return visitor.visitChildren(this);
@@ -706,30 +650,22 @@ public class MovaParser extends Parser {
 		return _localctx;
 	}
 
-	public static class SlavaUkrainiContext extends ParserRuleContext {
+	public static class EasterEggContext extends ParserRuleContext {
 		public TerminalNode SLAVAUKRAINI() { return getToken(MovaParser.SLAVAUKRAINI, 0); }
-		public SlavaUkrainiContext(ParserRuleContext parent, int invokingState) {
+		public EasterEggContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_slavaUkraini; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterSlavaUkraini(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitSlavaUkraini(this);
-		}
+		@Override public int getRuleIndex() { return RULE_easterEgg; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitSlavaUkraini(this);
+			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitEasterEgg(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final SlavaUkrainiContext slavaUkraini() throws RecognitionException {
-		SlavaUkrainiContext _localctx = new SlavaUkrainiContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_slavaUkraini);
+	public final EasterEggContext easterEgg() throws RecognitionException {
+		EasterEggContext _localctx = new EasterEggContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_easterEgg);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -768,14 +704,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_command; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterCommand(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitCommand(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitCommand(this);
@@ -889,14 +817,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_condition; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterCondition(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitCondition(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitCondition(this);
@@ -1059,14 +979,6 @@ public class MovaParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_conditional; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterConditional(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitConditional(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitConditional(this);
 			else return visitor.visitChildren(this);
@@ -1148,14 +1060,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_loop; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterLoop(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitLoop(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitLoop(this);
@@ -1281,8 +1185,8 @@ public class MovaParser extends Parser {
 		public LoopContext loop() {
 			return getRuleContext(LoopContext.class,0);
 		}
-		public SlavaUkrainiContext slavaUkraini() {
-			return getRuleContext(SlavaUkrainiContext.class,0);
+		public EasterEggContext easterEgg() {
+			return getRuleContext(EasterEggContext.class,0);
 		}
 		public List<TerminalNode> ALSO() { return getTokens(MovaParser.ALSO); }
 		public TerminalNode ALSO(int i) {
@@ -1298,14 +1202,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_validStructure; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterValidStructure(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitValidStructure(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitValidStructure(this);
@@ -1350,7 +1246,7 @@ public class MovaParser extends Parser {
 			case SLAVAUKRAINI:
 				{
 				setState(162);
-				slavaUkraini();
+				easterEgg();
 				}
 				break;
 			default:
@@ -1403,14 +1299,6 @@ public class MovaParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_validProgram; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).enterValidProgram(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MovaParserListener ) ((MovaParserListener)listener).exitValidProgram(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MovaParserVisitor ) return ((MovaParserVisitor<? extends T>)visitor).visitValidProgram(this);
