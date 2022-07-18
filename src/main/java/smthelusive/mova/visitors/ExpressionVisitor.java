@@ -80,16 +80,15 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
     }
 
     private MovaAction convertedAction(String rawAction) {
-        switch (rawAction) {
-            case "PLUS": return MovaAction.PLUS;
-            case "MINUS": return MovaAction.MINUS;
-            case "MULTIPLY": return MovaAction.MULTIPLY;
-            case "DIVIDE": return MovaAction.DIVIDE;
-            case "PREFIX": return MovaAction.PREFIX;
-            case "SUFFIX": return MovaAction.SUFFIX;
-            case "WITH":
-            default: return MovaAction.WITH;
-        }
+        return switch (rawAction) {
+            case "PLUS" -> MovaAction.PLUS;
+            case "MINUS" -> MovaAction.MINUS;
+            case "MULTIPLY" -> MovaAction.MULTIPLY;
+            case "DIVIDE" -> MovaAction.DIVIDE;
+            case "PREFIX" -> MovaAction.PREFIX;
+            case "SUFFIX" -> MovaAction.SUFFIX;
+            default -> MovaAction.WITH;
+        };
     }
 
     @Override

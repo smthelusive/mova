@@ -22,18 +22,29 @@ public class ByteCodeGenerator {
     private MethodVisitor mv;
     private final Map<String, RegistryVariable> byteCodeVariableRegistry = new HashMap<>();
 
+    /**
+     * start the class definition with the given class name
+     * start the main method
+     * @param name the name of the program
+     */
+    public void init(String name) {
+        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, "java/lang/Object", null);
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main",
+                "([" + Type.getType(String.class).getDescriptor() + ")V", null, null);
+        mv.visitCode();
+    }
+
     public void convertToDecimal(boolean left) {
         MovaType fromType = left ? getLeftElementOfStack() : typeStack.lastElement();
         if (!MovaType.STRING.equals(fromType) && !MovaType.INTEGER.equals(fromType)) return;
         // swap to be able to convert the element before the last one
         if (left) swap();
         switch (fromType) {
-            case INTEGER:
+            case INTEGER -> {
                 mv.visitInsn(Opcodes.I2D);
                 changeLastTypeOnLocalStackTo(MovaType.DECIMAL);
-                break;
-            case STRING:
-            default:
+            }
+            case STRING -> {
                 mv.visitLdcInsn(",");
                 mv.visitLdcInsn(".");
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "replace",
@@ -42,6 +53,7 @@ public class ByteCodeGenerator {
                         "parseDouble", "(" + Type.getType(String.class) + ")" +
                                 Type.DOUBLE_TYPE.getDescriptor(), false);
                 changeLastTypeOnLocalStackTo(MovaType.DECIMAL);
+            }
         }
         // swap back in the original order:
         if (left) swap();
@@ -87,32 +99,17 @@ public class ByteCodeGenerator {
     }
 
     private boolean someOperandIsString() {
-        return getLeftElementOfStack().equals(MovaType.STRING) ||
-                typeStack.lastElement().equals(MovaType.STRING);
+        return MovaType.STRING.equals(getLeftElementOfStack()) ||
+                MovaType.STRING.equals(typeStack.lastElement());
     }
 
     private String getLastTypeDescriptor() {
-        return Optional.ofNullable(typeStack.lastElement()).map(context -> {
-            switch (context) {
-                case INTEGER: return Type.INT_TYPE.getDescriptor();
-                case DECIMAL: return Type.DOUBLE_TYPE.getDescriptor();
-                case STRING:
-                default:
-                    return Type.getType(String.class).getDescriptor();
+        return Optional.ofNullable(typeStack.lastElement()).map(context -> switch (context) {
+                case INTEGER -> Type.INT_TYPE.getDescriptor();
+                case DECIMAL -> Type.DOUBLE_TYPE.getDescriptor();
+                default -> Type.getType(String.class).getDescriptor();
             }
-        }).orElse(Type.getType(String.class).getDescriptor());
-    }
-
-    /**
-     * start the class definition with the given class name
-     * start the main method
-     * @param name the name of the program
-     */
-    public void init(String name) {
-        cw.visit(Opcodes.V11, Opcodes.ACC_PUBLIC, name, null, "java/lang/Object", null);
-        mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main",
-             "([" + Type.getType(String.class).getDescriptor() + ")V", null, null);
-        mv.visitCode();
+        ).orElse(Type.getType(String.class).getDescriptor());
     }
 
     public void loadArgumentByIndex(int argIndex) {
@@ -132,14 +129,11 @@ public class ByteCodeGenerator {
      * @param identifier of a variable stored in the compiler's registry
      */
     public void addVariableAssignment(String identifier) {
-        int opcode;
-        switch (typeStack.lastElement()) {
-            case STRING: opcode = Opcodes.ASTORE;
-            break;
-            case DECIMAL: opcode = Opcodes.DSTORE;
-            break;
-            default: opcode = Opcodes.ISTORE;
-        }
+        int opcode = switch (typeStack.lastElement()) {
+            case DECIMAL -> Opcodes.DSTORE;
+            case INTEGER -> Opcodes.ISTORE;
+            default -> Opcodes.ASTORE;
+        };
 
         Optional<RegistryVariable> existingVariable = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
         if (existingVariable.isPresent()) {
@@ -225,15 +219,11 @@ public class ByteCodeGenerator {
         Optional<RegistryVariable> registryVariableOption = Optional.ofNullable(byteCodeVariableRegistry.get(identifier));
         registryVariableOption.ifPresent(registryVariable -> {
             typeStack.add(registryVariable.getType());
-            int opcodes;
-            switch (registryVariable.getType()) {
-                case INTEGER: opcodes = Opcodes.ILOAD;
-                    break;
-                case DECIMAL: opcodes = Opcodes.DLOAD;
-                    break;
-                case STRING:
-                default: opcodes = Opcodes.ALOAD;
-            }
+            int opcodes = switch (registryVariable.getType()) {
+                case INTEGER -> Opcodes.ILOAD;
+                case DECIMAL -> Opcodes.DLOAD;
+                default -> Opcodes.ALOAD;
+            };
             mv.visitVarInsn(opcodes, registryVariable.getId());
         });
         if (registryVariableOption.isEmpty()) {
@@ -246,11 +236,9 @@ public class ByteCodeGenerator {
     public void pushValueToOpStack(MovaValue value) {
         typeStack.add(value.getMovaType());
         switch (typeStack.lastElement()) {
-            case STRING: mv.visitLdcInsn(value.getStringValue());
-            break;
-            case DECIMAL: mv.visitLdcInsn(value.getDoubleValue());
-            break;
-            case INTEGER: mv.visitLdcInsn(value.getIntegerValue());
+            case STRING -> mv.visitLdcInsn(value.getStringValue());
+            case DECIMAL -> mv.visitLdcInsn(value.getDoubleValue());
+            case INTEGER -> mv.visitLdcInsn(value.getIntegerValue());
         }
     }
 
@@ -440,7 +428,6 @@ public class ByteCodeGenerator {
         mv.visitLabel(conditionEnd);
     }
 
-    // todo docs
     public void storeBooleanStringContainsSubstring(boolean negated) {
         Stream.of(true, false).forEach(this::convertToString);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String","contains", "(" +
@@ -448,7 +435,6 @@ public class ByteCodeGenerator {
         storeBooleanOnCondition(negated ? Opcodes.IFLE : Opcodes.IFGT);
     }
 
-    // todo test and docs
     public void storeBooleanOnEqualStrings(boolean negated) {
         Stream.of(true, false).forEach(this::convertToString);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String","equals", "(" +

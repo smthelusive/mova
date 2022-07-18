@@ -15,3 +15,12 @@ WIP.class
 src/main/java/smthelusive/mova/Test.java
 gen/
 src/main/java/Test.java
+DecimalConditions.class
+DecimalExpressions.class
+IncrementDecrement.class
+IntegerConditions.class
+IntegerExpressions.class
+Loops.class
+ProgramArguments.class
+StringConditions.class
+StringExpressions.class

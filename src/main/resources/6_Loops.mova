@@ -1,6 +1,5 @@
 a is 0.
-repeat until a is 6,7
-increment a also show a.
+repeat until a is 6,7 increment a also show a.
 
 do 5 times:
 show "five times".
