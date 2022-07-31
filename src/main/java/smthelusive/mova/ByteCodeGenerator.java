@@ -254,7 +254,6 @@ public class ByteCodeGenerator {
         }
     }
 
-    // todo javadocs
     public void reverseLastStackValue() {
         convertToString(false);
         String stringBuilderPath = "java/lang/StringBuilder";
@@ -271,7 +270,6 @@ public class ByteCodeGenerator {
             Type.getDescriptor(String.class),false);
     }
 
-    // todo javadocs
     public void reverseVariableValue(String identifier) {
         loadVariableToOpStack(identifier);
         reverseLastStackValue();
@@ -285,35 +283,33 @@ public class ByteCodeGenerator {
      */
     public void incrementVariable(String identifier) {
         loadVariableToOpStack(identifier);
-        RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
-        incrementLastStackValue(variable.getType());
+        incrementLastStackValue();
         addVariableAssignment(identifier);
     }
 
-    public void incrementLastStackValue(MovaType type) {
-        if (type.equals(MovaType.INTEGER)) {
-            pushValueToOpStack(new MovaValue(type, ONE));
+    public void incrementLastStackValue() {
+        if (typeStack.lastElement().equals(MovaType.INTEGER)) {
+            pushValueToOpStack(new MovaValue(typeStack.lastElement(), ONE));
             mv.visitInsn(Opcodes.IADD);
-        } else if (type.equals(MovaType.DECIMAL)) {
-            pushValueToOpStack(new MovaValue(type, ONE));
+        } else if (typeStack.lastElement().equals(MovaType.DECIMAL)) {
+            pushValueToOpStack(new MovaValue(typeStack.lastElement(), ONE));
             mv.visitInsn(Opcodes.DADD);
         }
     }
 
-    public void decrementLastStackValue(MovaType type) {
-        if (type.equals(MovaType.INTEGER)) {
-            pushValueToOpStack(new MovaValue(type, ONE));
+    public void decrementLastStackValue() {
+        if (typeStack.lastElement().equals(MovaType.INTEGER)) {
+            pushValueToOpStack(new MovaValue(typeStack.lastElement(), ONE));
             mv.visitInsn(Opcodes.ISUB);
-        } else if (type.equals(MovaType.DECIMAL)) {
-            pushValueToOpStack(new MovaValue(type, ONE));
+        } else if (typeStack.lastElement().equals(MovaType.DECIMAL)) {
+            pushValueToOpStack(new MovaValue(typeStack.lastElement(), ONE));
             mv.visitInsn(Opcodes.DSUB);
         }
     }
 
     public void decrementVariable(String identifier) {
         loadVariableToOpStack(identifier);
-        RegistryVariable variable = byteCodeVariableRegistry.get(identifier);
-        decrementLastStackValue(variable.getType());
+        decrementLastStackValue();
         addVariableAssignment(identifier);
     }
 

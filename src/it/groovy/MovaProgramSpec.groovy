@@ -193,7 +193,8 @@ class MovaProgramSpec extends Specification {
         result.toString() equals(
                 "tset\n" +
                 "test\n" +
-                "20.1\n")
+                "20.1\n" +
+                "gnirts\n")
     }
 
     def "easter egg"() {

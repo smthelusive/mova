@@ -2,12 +2,14 @@ package smthelusive.mova.visitors;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import smthelusive.mova.ByteCodeGenerator;
+import smthelusive.mova.Compiler;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
@@ -101,7 +103,7 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
     }
 
     /***
-     * decrements the last value on stack and keeps
+     * decrements the value of a variable and puts
      * the result on top of the stack for further use
      * @param ctx decrement context
      */
@@ -112,7 +114,7 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
     }
 
     /***
-     * increments the last value on stack and keeps
+     * increments the value of a variable and puts
      * the result on top of the stack for further use
      * @param ctx increment context
      */
@@ -123,8 +125,14 @@ public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {
     }
 
     public void visitReverseForReuse(MovaParser.ReverseContext ctx) {
-        String identifier = ctx.IDENTIFIER().getText();
-        bytecodeGenerator.reverseVariableValue(identifier);
-        bytecodeGenerator.loadVariableToOpStack(identifier);
+        if (Optional.ofNullable(ctx.IDENTIFIER()).isPresent()) {
+            String identifier = ctx.IDENTIFIER().getText();
+            bytecodeGenerator.loadVariableToOpStack(identifier);
+            bytecodeGenerator.reverseLastStackValue();
+        } else if (Optional.ofNullable(ctx.STRING()).isPresent()) {
+            MovaValue movaValue = new MovaValue(MovaType.STRING, clean(ctx.STRING().getText()));
+            bytecodeGenerator.pushValueToOpStack(movaValue);
+            bytecodeGenerator.reverseLastStackValue();
+        }
     }
 }
