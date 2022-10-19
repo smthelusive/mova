@@ -3,11 +3,8 @@ package smthelusive.mova.gen;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MovaParser extends Parser {
@@ -22,7 +19,7 @@ public class MovaParser extends Parser {
 		RPAREN=17, THEN=18, COLON=19, OR=20, AND=21, NOT=22, INCREMENT=23, DECREMENT=24, 
 		REVERSE=25, COMMA=26, ALSO=27, DOT=28, GREATERTHAN=29, LESSTHAN=30, GREATEROREQUAL=31, 
 		LESSOREQUAL=32, NOTEQUAL=33, CONTAINS=34, INTEGER=35, DECIMAL=36, ARGUMENT=37, 
-		STRING=38, IDENTIFIER=39, COMMENT=40, SLAVAUKRAINI=41;
+		STRING=38, IDENTIFIER=39, COMMENT=40, EASTEREGG=41;
 	public static final int
 		RULE_value = 0, RULE_expression = 1, RULE_decrement = 2, RULE_increment = 3, 
 		RULE_reverse = 4, RULE_allKindsExpression = 5, RULE_assignment = 6, RULE_output = 7, 
@@ -53,7 +50,7 @@ public class MovaParser extends Parser {
 			"LPAREN", "RPAREN", "THEN", "COLON", "OR", "AND", "NOT", "INCREMENT", 
 			"DECREMENT", "REVERSE", "COMMA", "ALSO", "DOT", "GREATERTHAN", "LESSTHAN", 
 			"GREATEROREQUAL", "LESSOREQUAL", "NOTEQUAL", "CONTAINS", "INTEGER", "DECIMAL", 
-			"ARGUMENT", "STRING", "IDENTIFIER", "COMMENT", "SLAVAUKRAINI"
+			"ARGUMENT", "STRING", "IDENTIFIER", "COMMENT", "EASTEREGG"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -651,7 +648,7 @@ public class MovaParser extends Parser {
 	}
 
 	public static class EasterEggContext extends ParserRuleContext {
-		public TerminalNode SLAVAUKRAINI() { return getToken(MovaParser.SLAVAUKRAINI, 0); }
+		public TerminalNode EASTEREGG() { return getToken(MovaParser.EASTEREGG, 0); }
 		public EasterEggContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -670,7 +667,7 @@ public class MovaParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(85);
-			match(SLAVAUKRAINI);
+			match(EASTEREGG);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1243,7 +1240,7 @@ public class MovaParser extends Parser {
 				loop();
 				}
 				break;
-			case SLAVAUKRAINI:
+			case EASTEREGG:
 				{
 				setState(162);
 				easterEgg();
@@ -1316,7 +1313,7 @@ public class MovaParser extends Parser {
 			setState(177);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << DO) | (1L << REPEAT) | (1L << IF) | (1L << SHOW) | (1L << INCREMENT) | (1L << DECREMENT) | (1L << REVERSE) | (1L << STRING) | (1L << IDENTIFIER) | (1L << SLAVAUKRAINI))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << DO) | (1L << REPEAT) | (1L << IF) | (1L << SHOW) | (1L << INCREMENT) | (1L << DECREMENT) | (1L << REVERSE) | (1L << STRING) | (1L << IDENTIFIER) | (1L << EASTEREGG))) != 0)) {
 				{
 				{
 				setState(172);

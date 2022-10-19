@@ -9,8 +9,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <antlr.version>4.10.1</antlr.version>
         <asm.version>9.3</asm.version>
     </properties>
 
@@ -18,7 +19,7 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-            <version>4.10.1</version>
+            <version>${antlr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
@@ -44,7 +45,7 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.10.1</version>
+                <version>${antlr.version}</version>
                 <executions>
                     <execution>
                         <id>antlr</id>

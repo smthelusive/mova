@@ -4,10 +4,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.objectweb.asm.Opcodes;
 import smthelusive.mova.ByteCodeGenerator;
 import smthelusive.mova.Compiler;
+import smthelusive.mova.domain.MovaComparison;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
 
@@ -30,12 +32,12 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
             if (ctx.LPAREN() != null) { // (condition)
                 visitCondition(ctx.condition(0));
             } else if (ctx.OR() != null) { // condition OR condition
-                visitCondition(ctx.condition(0));
-                visitCondition(ctx.condition(1));
+                Stream.of(0, 1).forEach(conditionIndex ->
+                        visitCondition(ctx.condition(conditionIndex)));
                 byteCodeGenerator.bitwiseOr();
             } else if (ctx.AND() != null) { // condition AND condition
-                visitCondition(ctx.condition(0));
-                visitCondition(ctx.condition(1));
+                Stream.of(0, 1).forEach(conditionIndex ->
+                        visitCondition(ctx.condition(conditionIndex)));
                 byteCodeGenerator.bitwiseAnd();
             } else if (ctx.allKindsExpression().size() == 2) { // allKindsExpression ? allkindsExpression
                 expressionVisitor.visitAllKindsExpression(ctx.allKindsExpression(0));
@@ -45,19 +47,35 @@ public class ConditionalLoopVisitor extends MovaParserBaseVisitor<Void> {
                 boolean negated = (amountOfNegations > 0) && (amountOfNegations % 2 != 0);
                 int comparingSymbolIndex = ctx.NOT().size() + 1;
                 TerminalNode comparison = (TerminalNode)ctx.getChild(comparingSymbolIndex);
-                String comparisonKeyword = MovaParser.VOCABULARY.getSymbolicName(comparison.getSymbol().getType());
+
+                MovaComparison comparisonKeyword = convertedComparison(
+                        MovaParser.VOCABULARY.getSymbolicName(comparison.getSymbol().getType()));
                 byteCodeGenerator.compareTwoThings(comparisonKeyword, negated);
             }
         }
         return null;
     }
 
+    private MovaComparison convertedComparison(String rawComparison) {
+        return switch (rawComparison) {
+            case "LESSTHAN" -> MovaComparison.LESSTHAN;
+            case "LESSOREQUAL" -> MovaComparison.LESSOREQUAL;
+            case "GREATERTHAN" -> MovaComparison.GREATERTHAN;
+            case "GREATEROREQUAL" -> MovaComparison.GREATEROREQUAL;
+            case "NOTEQUAL" -> MovaComparison.NOTEQUAL;
+            case "CONTAINS" -> MovaComparison.CONTAINS;
+            default -> MovaComparison.EQUALS;
+        };
+    }
+
     @Override
     public Void visitConditional(MovaParser.ConditionalContext ctx) {
         visitCondition(ctx.condition());
         MovaParser.ValidStructureContext ifTrueContext = ctx.validStructure(0);
-        Optional<MovaParser.ValidStructureContext> ifFalseContext = Optional.ofNullable(ctx.validStructure(1));
-        byteCodeGenerator.doOrElse(movaProgramVisitor::visitValidStructure, ifTrueContext, ifFalseContext);
+        Optional<MovaParser.ValidStructureContext> ifFalseContext =
+                Optional.ofNullable(ctx.validStructure(1));
+        byteCodeGenerator.doOrElse(movaProgramVisitor::visitValidStructure,
+                ifTrueContext, ifFalseContext);
         return null;
     }
 

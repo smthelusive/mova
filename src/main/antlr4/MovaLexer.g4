@@ -1,6 +1,6 @@
 lexer grammar MovaLexer;
 
-WS                 : [ \n\r\t] -> skip ;
+WS                 : [ \n\r\t]+ -> skip ;
 
 DO                 : 'do' ;
 UNTIL              : 'until' ;
@@ -13,11 +13,11 @@ SHOW               : 'show' | 'print' | 'output' ;
 PLUS               : '+' | 'plus' | 'add' ;
 MINUS              : '-' | 'minus' | 'subtract' ;
 MULTIPLY           : '*' | 'multiply' | 'multiply by' ;
-DIVIDE             : '/' | 'divide' | 'divide by' | 'div' ;
-PREFIX             : 'prefix' | 'prefixed' | 'prefixed with' ;
-SUFFIX             : 'suffix' | 'with suffix' | 'suffixed' | 'suffixed with' | 'with' ;
+DIVIDE             : '/' | 'div'('ide''d'?)?' by'? ;
+PREFIX             : 'with prefix' | 'prefix''ed'?' with'? ;
+SUFFIX             : 'with'' suffix'? | 'suffix''ed'?' with'? ;
 
-EQUALS             : '=' | 'is' | 'equal to' | 'equals to' | 'equals' | 'equal' ;
+EQUALS             : '=' | 'is' | 'equal''s'?' to'? ;
 LPAREN             : '(' ;
 RPAREN             : ')' ;
 THEN               : 'then' ;
@@ -27,19 +27,19 @@ OR                 : 'or' | '|' | '||' ;
 AND                : 'and' | '&' | '&&' ;
 NOT                : 'not' | '!' ;
 
-INCREMENT          : 'increment' | 'incremented' | '++' ;
-DECREMENT          : 'decrement' | 'decremented' | '--' ;
-REVERSE            : 'reverse' | 'reversed' ;
+INCREMENT          : 'increment''ed'? | '++' ;
+DECREMENT          : 'decrement''ed'? | '--' ;
+REVERSE            : 'reverse''d'? ;
 
 COMMA              : ',' ;
 ALSO               : ';' | 'also' ;
 DOT                : '.' ;
 
-GREATERTHAN        : '>' | 'greater than' | 'greater' | 'more than' | 'more' ;
-LESSTHAN           : '<' | 'less than' | 'less' ;
-GREATEROREQUAL     : '>=' | 'more or equal to' | 'more or equal' | 'greater or equal to' | 'greater or equal' ;
-LESSOREQUAL        : '<=' | 'less or equal to' | 'less or equal' ;
-NOTEQUAL           : '!=' | 'not equal to' | 'not equal' ;
+GREATERTHAN        : '>' | ('greater'|'more')' than'? ;
+LESSTHAN           : '<' | 'less'' than'? ;
+GREATEROREQUAL     : '>=' | ('more'|'greater')' or equal'' to'? ;
+LESSOREQUAL        : '<=' | 'less or equal'' to'? ;
+NOTEQUAL           : '!=' | 'not equal'' to'? ;
 CONTAINS           : 'contains' ;
 
 fragment DIGIT     : [0-9] ;
@@ -48,11 +48,10 @@ fragment ESCAPE_CHAR : '\\' [0btnfr"'\\] ;
 
 INTEGER            : '-'? DIGIT+ ;
 DECIMAL            : '-'? DIGIT+ COMMA DIGIT+ ;
-ARGUMENT           : 'arg' INTEGER;
+ARGUMENT           : 'arg' INTEGER ;
 STRING             : '"' ( ~[\\"\r\n] | ESCAPE_CHAR )* '"' ;
 IDENTIFIER         : SYMBOL+ ;
 
 COMMENT            : ('//' | '#' | 'comment:' | 'note:') ~[\r\n]* -> skip ;
 
-// easter egg, this command should reply in terminal "Heroyam Slava!" ("Героям Слава!")
-SLAVAUKRAINI       : ((('s' | 'S')'lava ' ('u' | 'U') 'kraini') | (('с' | 'С')'лава ' ('у' | 'У') 'країні')) '!'? ;
+EASTEREGG       : ((('s' | 'S')'lava ' ('u' | 'U') 'kraini') | (('с' | 'С')'лава ' ('у' | 'У') 'країні')) '!'? ;

@@ -6,5 +6,5 @@ show a.
 b is 1,02.
 show reverse b.
 
-str is reverse "string".
+str is reversed "string".
 show str.

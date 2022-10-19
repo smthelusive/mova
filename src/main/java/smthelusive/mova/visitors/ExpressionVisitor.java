@@ -2,14 +2,12 @@ package smthelusive.mova.visitors;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import smthelusive.mova.ByteCodeGenerator;
-import smthelusive.mova.Compiler;
 import smthelusive.mova.domain.MovaAction;
 import smthelusive.mova.domain.MovaType;
 import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public class ExpressionVisitor extends MovaParserBaseVisitor<Void> {

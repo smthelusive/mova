@@ -1,0 +1,8 @@
+string is "J-Fall is ".
+do arg0 times string is string with "super ".
+if arg0 > 3 string is string with "awesome!" else string is string with "nice!".
+show string.
+
+if arg0 is hi show "hello J-Fall!"
+else if arg0 is bye show "bye-bye J-Fall!"
+also show "see you next time!".

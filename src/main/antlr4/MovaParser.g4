@@ -17,7 +17,7 @@ allKindsExpression: (expression | increment | decrement | reverse);
 assignment: IDENTIFIER EQUALS allKindsExpression;
 output: SHOW allKindsExpression;
 
-easterEgg: SLAVAUKRAINI;
+easterEgg: EASTEREGG;
 
 command: (assignment | decrement | increment | reverse | output);
 

@@ -6,10 +6,11 @@ import smthelusive.mova.domain.MovaValue;
 import smthelusive.mova.gen.MovaParser;
 import smthelusive.mova.gen.MovaParserBaseVisitor;
 
+import static smthelusive.mova.EasterEgg.RESPONSE;
+
 public class CommandVisitor extends MovaParserBaseVisitor<Void> {
     private final ExpressionVisitor expressionVisitor;
     private final ByteCodeGenerator byteCodeGenerator;
-    private static final String HEROYAM_SLAVA = "Героям Слава!";
 
     public CommandVisitor(MovaProgramVisitor movaProgramVisitor) {
         byteCodeGenerator = movaProgramVisitor.getSmartByteCodeGenerator();
@@ -56,7 +57,7 @@ public class CommandVisitor extends MovaParserBaseVisitor<Void> {
 
     @Override
     public Void visitEasterEgg(MovaParser.EasterEggContext ctx) {
-        byteCodeGenerator.pushValueToOpStack(new MovaValue(MovaType.STRING, HEROYAM_SLAVA));
+        byteCodeGenerator.pushValueToOpStack(new MovaValue(MovaType.STRING, RESPONSE));
         byteCodeGenerator.printlnValueOnTopOfOpStack();
         return null;
     }

@@ -1,7 +1,7 @@
 dec equals 1,56.
 show dec.
 
-dec is (0,5 plus 1) multiply by 0,89 divide by 2.
+dec is (0,5 plus 1) multiply by 0,89 divided by 2.
 a equals dec.
 show dec.
 show a.

@@ -1,0 +1,71 @@
+// expressions:
+
+a is 1 + 1.
+test = (1 + ((((2 + 2 + 2) + 2) + ((1 + 1)))) + ((1 + 1 + 1) + 1) + (1 + ((1 + 1) - 1)) + 1) * a.
+dec is (0,5 plus 1) multiply by 0,89 divide by 2.
+b is a plus 22.
+s = 1 + 2,1 - (6 + 5) + (3,5 + 14 - 4,5) - 18.
+b is 0.
+b is b incremented.
+b is decrement a.
+
+// string operations:
+
+str is reverse "string".
+show str.
+show world prefixed with "hello " prefixed with "wow, ".
+show "some test" with 1,55.
+show eee suffix (right prefixed with left).
+
+// conditions:
+
+if 2 > 1: show correct.
+if 1 = 1 then show yes else show no.
+if 1 + 5 = 6 show "awesome".
+if (5 > 2 and (5 not > 7 or 2 > 10)) or (2 > 5 and 1 > 5): show "hello" also show "world".
+if (1 + 5 + 0,5 * 4) / 4 equals to 8 * 2 / 4 - 2 show "correct!".
+if 0,5 > 5 or 5 > 4,5 show "that's right!".
+
+if 555 contains 5 show correct.
+if "aaa" not contains a show incorrect.
+if 5555 equals "5555" show "that's right!".
+if 12 - 4 contains 10 - 2 show "nice".
+
+// loops:
+
+a is 0.
+repeat until a > 6,7
+increment a also show a.
+
+do 5 times:
+show "five times".
+
+repeat 7 - 5 times
+show two.
+
+do show "three" 2,9 times.
+
+// output:
+
+show test.
+show 5 * (2 + 3) - 16 / (8 + 152) * 467.
+show "hello " also show "world".
+a is 150.
+show a incremented.
+show decrement a.
+show reverse a.
+print "that also works, " also output "something".
+
+// program arguments:
+
+show arg0 with " " with arg1.
+show arg0 + arg1.
+
+show arg0 with 9,2.
+show arg1 plus 9,2.
+
+
+// this is a comment
+note: this is another comment.
+comment: this is one more comment
+# commenting something

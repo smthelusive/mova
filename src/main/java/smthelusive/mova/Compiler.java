@@ -14,7 +14,8 @@ import java.util.Arrays;
  *  Compiler does the following:
  *  - reads the file
  *  - builds the parse tree using the existing antlr parser
- *  - visits the main program node which through the tree of visitors generates the bytecode representation of a program
+ *  - visits the main program node which through the tree of visitors
+ *      generates the bytecode representation of a program
  *  - writes the bytecode to a class file
  */
 public class Compiler {
@@ -31,13 +32,15 @@ public class Compiler {
                 MovaLexer lexer = new MovaLexer(CharStreams.fromFileName(inputFile));
                 MovaParser parser = new MovaParser(new CommonTokenStream(lexer));
                 String[] filename = inputFile.split("/");
-                String programName = filename[filename.length - 1].replace(".mova", "");
+                String programName = filename[filename.length - 1]
+                        .replace(".mova", "");
                 ByteCodeGenerator byteCodeGenerator = new ByteCodeGenerator();
                 byteCodeGenerator.init(programName);
                 MovaProgramVisitor movaProgramVisitor = new MovaProgramVisitor(byteCodeGenerator);
                 movaProgramVisitor.visit(parser.validProgram());
                 byte[] bytes = byteCodeGenerator.cleanCloseProgram();
-                FileOutputStream stream = new FileOutputStream(programName + ".class", false);
+                FileOutputStream stream =
+                        new FileOutputStream(programName + ".class", false);
                 stream.write(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
